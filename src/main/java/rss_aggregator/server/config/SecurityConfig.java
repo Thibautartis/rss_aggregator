@@ -60,7 +60,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public JavaMailSender getJavaMailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setHost("smtp.gmail.com");
-        mailSender.setPort(25);
+        mailSender.setPort(587);
 
         mailSender.setUsername("javatek2020bg@gmail.com");
         mailSender.setPassword("fpsgsfvykpbupspr");

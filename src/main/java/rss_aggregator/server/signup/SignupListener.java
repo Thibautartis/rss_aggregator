@@ -11,6 +11,9 @@ import rss_aggregator.server.users.User;
 import org.springframework.mail.javamail.JavaMailSender;
 
 import java.util.UUID;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Component
 public class SignupListener implements ApplicationListener<OnSignupCompleteEvent> {
@@ -38,13 +41,17 @@ public class SignupListener implements ApplicationListener<OnSignupCompleteEvent
 
         String confirmationUrl
                 = event.getAppUrl() + "/signupConfirm.html?token=" + token;
-        String message = messages.getMessage("message.regSucc", null, event.getLocale());
+        String message = "Registration success, niquel, super";
 
         SimpleMailMessage email = new SimpleMailMessage();
         email.setTo(user.getEmail());
         email.setFrom("super");
         email.setSubject("Signup Confirmation");
         email.setText(message + "\r\n" + "http://localhost:8080" + confirmationUrl);
-        mailSender.send(email);
+
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.submit(() -> {
+            mailSender.send(email);
+        });
     }
 }
