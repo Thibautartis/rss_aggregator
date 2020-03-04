@@ -1,0 +1,58 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'org.springframework.boot' version '2.2.5.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.7.RELEASE'
+    id 'war'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+
+    // https://mvnrepository.com/artifact/com.rometools/rome
+    compile group: 'com.rometools', name: 'rome', version: '1.5.0'
+
+    // https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api
+    providedCompile group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.1'
+
+    // https://mvnrepository.com/artifact/org.springframework/spring-core
+    compile group: 'org.springframework', name: 'spring-context', version: '5.2.4.RELEASE'
+
+    // https://mvnrepository.com/artifact/org.springframework/spring-web
+    compile group: 'org.springframework', name: 'spring-web', version: '5.2.4.RELEASE'
+
+    // https://mvnrepository.com/artifact/org.springframework/spring-webmvc
+    compile group: 'org.springframework', name: 'spring-webmvc', version: '5.2.4.RELEASE'
+
+    // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-autoconfigure
+    compile group: 'org.springframework.boot', name: 'spring-boot-autoconfigure', version: '2.2.5.RELEASE'
+
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.2.5.RELEASE'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    compile group: 'org.mariadb.jdbc', name: 'mariadb-java-client'
+
+    // https://mvnrepository.com/artifact/org.springframework.security/spring-security-crypto
+    compile group: 'org.springframework.security', name: 'spring-security-crypto', version: '5.2.2.RELEASE'
+
+
+}
+
+mainClassName = 'rss_aggregator.server.RssFeedApplication'
