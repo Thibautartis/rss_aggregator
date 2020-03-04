@@ -10,7 +10,10 @@ import rss_aggregator.server.security.VerificationToken;
 import rss_aggregator.server.security.VerificationTokenRepository;
 
 import javax.transaction.Transactional;
+import java.util.Calendar;
+import java.util.Locale;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -24,6 +27,10 @@ public class UserService implements IUserService {
 
     @Autowired
     private VerificationTokenRepository tokenRepository;
+
+    public static final String TOKEN_INVALID = "invalidToken";
+    public static final String TOKEN_EXPIRED = "expired";
+    public static final String TOKEN_VALID = "valid";
 
     private boolean emailExists(final String email) {
         return userRepository.findByEmail(email) != null;
@@ -72,6 +79,16 @@ public class UserService implements IUserService {
     }
 
     @Override
+    public VerificationToken generateNewVerificationToken(final String existingVerificationToken) {
+        VerificationToken vToken = tokenRepository.findByToken(existingVerificationToken);
+        vToken.updateToken(UUID.randomUUID()
+                .toString());
+        vToken = tokenRepository.save(vToken);
+        System.out.println("token updated : " + vToken);
+        return vToken;
+    }
+
+    @Override
     public User findUserByEmail(String email) {
         return null;
     }
@@ -93,6 +110,18 @@ public class UserService implements IUserService {
 
     @Override
     public String validateVerificationToken(String token) {
-        return null;
+
+        VerificationToken verificationToken = getVerificationToken(token);
+        if (verificationToken == null) {
+            return TOKEN_INVALID;
+        }
+        User user = verificationToken.getUser();
+        Calendar cal = Calendar.getInstance();
+        if ((verificationToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
+            return TOKEN_EXPIRED;
+        }
+        user.setActivated(true);
+        saveRegisteredUser(user);
+        return TOKEN_VALID;
     }
 }

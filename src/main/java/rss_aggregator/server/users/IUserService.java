@@ -19,6 +19,8 @@ public interface IUserService {
 
     void createVerificationToken(User user, String token);
 
+    VerificationToken generateNewVerificationToken(String existingVerificationToken);
+
     User findUserByEmail(String email);
 
     Optional<User> getUserByID(long id);

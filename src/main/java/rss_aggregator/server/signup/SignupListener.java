@@ -6,6 +6,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.MessageSource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Component;
+import rss_aggregator.server.SendMail;
 import rss_aggregator.server.users.IUserService;
 import rss_aggregator.server.users.User;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -43,15 +44,7 @@ public class SignupListener implements ApplicationListener<OnSignupCompleteEvent
                 = event.getAppUrl() + "/signupConfirm.html?token=" + token;
         String message = "Registration success, niquel, super";
 
-        SimpleMailMessage email = new SimpleMailMessage();
-        email.setTo(user.getEmail());
-        email.setFrom("super");
-        email.setSubject("Signup Confirmation");
-        email.setText(message + "\r\n" + "http://localhost:8080" + confirmationUrl);
-
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(() -> {
-            mailSender.send(email);
-        });
+        new SendMail(mailSender, user.getEmail(), "super", "Signup confirmation",
+                message + "\r\n" + "http://localhost:8080" + confirmationUrl);
     }
 }
