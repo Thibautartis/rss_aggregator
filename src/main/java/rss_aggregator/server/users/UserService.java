@@ -6,6 +6,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import rss_aggregator.server.exceptions.EmailExistsException;
 import rss_aggregator.server.exceptions.UserAlreadyExistsException;
+import rss_aggregator.server.security.VerificationToken;
+import rss_aggregator.server.security.VerificationTokenRepository;
 
 import javax.transaction.Transactional;
 import java.util.Optional;
@@ -19,6 +21,9 @@ public class UserService implements IUserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private VerificationTokenRepository tokenRepository;
 
     private boolean emailExists(final String email) {
         return userRepository.findByEmail(email) != null;
@@ -36,14 +41,22 @@ public class UserService implements IUserService {
         return userRepository.save(user);
     }
 
-    @Override
-    public User getUser(String verificationToken) {
+    public User getUser(final String verificationToken) {
+        final VerificationToken token = tokenRepository.findByToken(verificationToken);
+        if (token != null) {
+            return token.getUser();
+        }
         return null;
     }
 
     @Override
-    public void saveRegisteredUser(User user) {
+    public VerificationToken getVerificationToken(final String VerificationToken) {
+        return tokenRepository.findByToken(VerificationToken);
+    }
 
+    @Override
+    public void saveRegisteredUser(User user) {
+        userRepository.save(user);
     }
 
     @Override
@@ -52,8 +65,10 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public void createVerificationTokenForUser(User user, String token) {
-
+    public void createVerificationToken(User user, String token) {
+        VerificationToken myToken = new VerificationToken(token, user);
+        tokenRepository.save(myToken);
+        System.out.println("token created : " + token);
     }
 
     @Override

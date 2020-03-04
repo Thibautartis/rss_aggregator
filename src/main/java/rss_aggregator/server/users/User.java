@@ -1,5 +1,7 @@
 package rss_aggregator.server.users;
 
+import rss_aggregator.server.security.VerificationToken;
+
 import javax.persistence.*;
 
 @Entity
@@ -14,12 +16,23 @@ public class User {
     private String email;
     private String password;
 
-    public Long getId() {
+    @Column(name = "activated")
+    private boolean activated = false;
+
+    public Long get_id() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void set_id(Long id) {
         this.id = id;
+    }
+
+    public boolean isActivated() {
+        return activated;
+    }
+
+    public void setActivated(boolean activated) {
+        this.activated = activated;
     }
 
     public String getEmail() {

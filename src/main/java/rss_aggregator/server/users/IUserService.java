@@ -1,6 +1,7 @@
 package rss_aggregator.server.users;
 
 import rss_aggregator.server.exceptions.UserAlreadyExistsException;
+import rss_aggregator.server.security.VerificationToken;
 
 import java.util.Optional;
 
@@ -10,11 +11,13 @@ public interface IUserService {
 
     User getUser(String verificationToken);
 
+    VerificationToken getVerificationToken(String VerificationToken);
+
     void saveRegisteredUser(User user);
 
     void deleteUser(User user);
 
-    void createVerificationTokenForUser(User user, String token);
+    void createVerificationToken(User user, String token);
 
     User findUserByEmail(String email);
 
