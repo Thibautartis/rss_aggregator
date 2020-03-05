@@ -1,8 +1,8 @@
 package rss_aggregator.server.users;
 
 import rss_aggregator.server.exceptions.UserAlreadyExistsException;
-import rss_aggregator.server.users.models.User;
-import rss_aggregator.server.security.models.VerificationToken;
+import rss_aggregator.server.users.model.User;
+import rss_aggregator.server.verificationtoken.model.VerificationToken;
 
 import java.util.Optional;
 

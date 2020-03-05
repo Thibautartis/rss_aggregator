@@ -5,14 +5,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import rss_aggregator.server.rss.RssFeedRepository;
-import rss_aggregator.server.rss.models.RssFeed;
+import rss_aggregator.server.rss.model.RssFeed;
 import rss_aggregator.server.userfeed.UserFeedRepository;
 import rss_aggregator.server.userfeed.model.UserFeed;
 import rss_aggregator.server.users.IUserService;
-import rss_aggregator.server.users.models.User;
+import rss_aggregator.server.users.model.User;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;

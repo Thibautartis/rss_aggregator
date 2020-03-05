@@ -1,10 +1,6 @@
-package rss_aggregator.server.users.models;
-
-import org.springframework.data.jpa.repository.Query;
-import rss_aggregator.server.rss.models.RssFeed;
+package rss_aggregator.server.users.model;
 
 import javax.persistence.*;
-import java.util.Collection;
 
 @Entity
 @Table(name="users")

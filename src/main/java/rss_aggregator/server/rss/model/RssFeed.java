@@ -1,9 +1,6 @@
-package rss_aggregator.server.rss.models;
-
-import rss_aggregator.server.users.models.User;
+package rss_aggregator.server.rss.model;
 
 import javax.persistence.*;
-import java.util.Collection;
 import java.util.Objects;
 
 @Entity

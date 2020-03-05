@@ -8,7 +8,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import rss_aggregator.server.users.models.User;
+import rss_aggregator.server.users.model.User;
 
 import java.util.ArrayList;
 import java.util.List;

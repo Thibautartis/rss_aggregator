@@ -13,9 +13,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.servlet.ModelAndView;
 import rss_aggregator.server.SendMail;
 import rss_aggregator.server.exceptions.EmailExistsException;
-import rss_aggregator.server.security.models.VerificationToken;
+import rss_aggregator.server.verificationtoken.model.VerificationToken;
 import rss_aggregator.server.users.IUserService;
-import rss_aggregator.server.users.models.User;
+import rss_aggregator.server.users.model.User;
 import rss_aggregator.server.users.UserDTO;
 
 import javax.servlet.http.HttpServletRequest;

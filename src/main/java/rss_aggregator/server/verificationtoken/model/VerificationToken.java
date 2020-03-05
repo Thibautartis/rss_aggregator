@@ -1,6 +1,6 @@
-package rss_aggregator.server.security.models;
+package rss_aggregator.server.verificationtoken.model;
 
-import rss_aggregator.server.users.models.User;
+import rss_aggregator.server.users.model.User;
 
 import java.util.Calendar;
 import java.util.Date;

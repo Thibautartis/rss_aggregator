@@ -4,9 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import rss_aggregator.server.exceptions.EmailExistsException;
-import rss_aggregator.server.users.models.User;
-import rss_aggregator.server.security.models.VerificationToken;
-import rss_aggregator.server.security.VerificationTokenRepository;
+import rss_aggregator.server.users.model.User;
+import rss_aggregator.server.verificationtoken.model.VerificationToken;
+import rss_aggregator.server.verificationtoken.VerificationTokenRepository;
 
 import javax.transaction.Transactional;
 import java.util.Calendar;

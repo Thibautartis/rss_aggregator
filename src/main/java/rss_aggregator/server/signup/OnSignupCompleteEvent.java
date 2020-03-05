@@ -1,7 +1,7 @@
 package rss_aggregator.server.signup;
 
 import org.springframework.context.ApplicationEvent;
-import rss_aggregator.server.users.models.User;
+import rss_aggregator.server.users.model.User;
 
 import java.util.Locale;
 

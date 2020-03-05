@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import rss_aggregator.server.users.models.User;
+import rss_aggregator.server.users.model.User;
 import rss_aggregator.server.users.UserRepository;
 
 import java.util.ArrayList;
