@@ -1,4 +1,4 @@
-package rss_aggregator.server.views;
+package rss_aggregator.server.rss.views;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +12,7 @@ import org.springframework.web.servlet.view.feed.AbstractRssFeedView;
 
 import com.rometools.rome.feed.rss.Channel;
 import com.rometools.rome.feed.rss.Item;
-import rss_aggregator.server.RssGetter;
+import rss_aggregator.server.rss.RssGetter;
 
 @Component
 public class RssFeedView extends AbstractRssFeedView {

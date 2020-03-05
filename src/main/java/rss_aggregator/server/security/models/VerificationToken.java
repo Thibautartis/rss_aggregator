@@ -1,6 +1,6 @@
-package rss_aggregator.server.security;
+package rss_aggregator.server.security.models;
 
-import rss_aggregator.server.users.User;
+import rss_aggregator.server.users.models.User;
 
 import java.util.Calendar;
 import java.util.Date;

@@ -1,17 +1,15 @@
 package rss_aggregator.server.users;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import rss_aggregator.server.exceptions.EmailExistsException;
-import rss_aggregator.server.exceptions.UserAlreadyExistsException;
-import rss_aggregator.server.security.VerificationToken;
+import rss_aggregator.server.users.models.User;
+import rss_aggregator.server.security.models.VerificationToken;
 import rss_aggregator.server.security.VerificationTokenRepository;
 
 import javax.transaction.Transactional;
 import java.util.Calendar;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
 

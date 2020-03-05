@@ -4,17 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.MessageSource;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Component;
 import rss_aggregator.server.SendMail;
 import rss_aggregator.server.users.IUserService;
-import rss_aggregator.server.users.User;
+import rss_aggregator.server.users.models.User;
 import org.springframework.mail.javamail.JavaMailSender;
 
 import java.util.UUID;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 @Component
 public class SignupListener implements ApplicationListener<OnSignupCompleteEvent> {

@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.View;
-import rss_aggregator.server.views.RssFeedView;
+import rss_aggregator.server.rss.views.RssFeedView;
 
 @RestController
 public class RssFeedController {

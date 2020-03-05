@@ -1,8 +1,9 @@
-package rss_aggregator.server.users;
+package rss_aggregator.server.users.models;
 
-import rss_aggregator.server.security.VerificationToken;
+import rss_aggregator.server.rss.models.RssFeed;
 
 import javax.persistence.*;
+import java.util.Collection;
 
 @Entity
 @Table(name="users")
@@ -49,5 +50,16 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    @ManyToMany
+    private Collection<RssFeed> rssFeeds;
+
+    public Collection<RssFeed> getRssFeeds() {
+        return rssFeeds;
+    }
+
+    public void setRssFeeds(Collection<RssFeed> rssFeeds) {
+        this.rssFeeds = rssFeeds;
     }
 }

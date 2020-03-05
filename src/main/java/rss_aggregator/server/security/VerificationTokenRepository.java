@@ -3,7 +3,8 @@ package rss_aggregator.server.security;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import rss_aggregator.server.users.User;
+import rss_aggregator.server.users.models.User;
+import rss_aggregator.server.security.models.VerificationToken;
 
 import java.util.Date;
 import java.util.stream.Stream;

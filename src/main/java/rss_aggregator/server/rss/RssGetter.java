@@ -1,4 +1,4 @@
-package rss_aggregator.server;
+package rss_aggregator.server.rss;
 
 import com.rometools.rome.feed.rss.Item;
 import com.rometools.rome.feed.synd.SyndEntry;

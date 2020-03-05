@@ -3,7 +3,6 @@ package rss_aggregator.server.signup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -14,17 +13,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.servlet.ModelAndView;
 import rss_aggregator.server.SendMail;
 import rss_aggregator.server.exceptions.EmailExistsException;
-import rss_aggregator.server.security.VerificationToken;
+import rss_aggregator.server.security.models.VerificationToken;
 import rss_aggregator.server.users.IUserService;
-import rss_aggregator.server.users.User;
+import rss_aggregator.server.users.models.User;
 import rss_aggregator.server.users.UserDTO;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.Calendar;
-import java.util.Locale;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import org.springframework.context.MessageSource;
 import rss_aggregator.server.users.UserService;
