@@ -88,12 +88,12 @@ public class UserService implements IUserService {
 
     @Override
     public User findUserByEmail(String email) {
-        return null;
+        return userRepository.findByEmail(email);
     }
 
     @Override
     public Optional<User> getUserByID(long id) {
-        return Optional.empty();
+        return userRepository.findById(id);
     }
 
     @Override

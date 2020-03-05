@@ -2,15 +2,22 @@ package rss_aggregator.server.users.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import rss_aggregator.server.rss.RssFeedRepository;
 import rss_aggregator.server.rss.models.RssFeed;
+import rss_aggregator.server.userfeed.UserFeedRepository;
+import rss_aggregator.server.userfeed.model.UserFeed;
 import rss_aggregator.server.users.IUserService;
+import rss_aggregator.server.users.models.User;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class UserController {
@@ -18,15 +25,24 @@ public class UserController {
     private IUserService userService;
 
     @Autowired
-    private RssFeedRepository feedRepository;
+    private UserFeedRepository userFeedRepository;
 
-    @RequestMapping(value = "/addFeed", method = RequestMethod.GET)
-    @ResponseBody
-    public String addFeed(final HttpServletRequest request, @RequestParam("feed") final String feed) {
-        RssFeed rssFeed = new RssFeed();
+    @Autowired
+    private RssFeedRepository rssFeedRepository;
 
-        rssFeed.setFeed(feed);
-        feedRepository.save(rssFeed);
-        return "/rss";
+    @RequestMapping(value = "/user", method = RequestMethod.GET)
+    public String showUser(final HttpServletRequest request, final Model model) {
+        User user = userService.findUserByEmail(request.getUserPrincipal().getName());
+
+        List<UserFeed> userFeeds = userFeedRepository.findAllByUser(user.get_id());
+        ArrayList<String> feeds = new ArrayList<>();
+
+        for (UserFeed userFeed: userFeeds) {
+            Optional<RssFeed> feed = rssFeedRepository.findById(userFeed.getFeed());
+            feeds.add(feed.get().getFeed());
+        }
+
+        model.addAttribute("feeds", feeds);
+        return "/user";
     }
 }

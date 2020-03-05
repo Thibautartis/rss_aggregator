@@ -1,5 +1,6 @@
 package rss_aggregator.server.users.models;
 
+import org.springframework.data.jpa.repository.Query;
 import rss_aggregator.server.rss.models.RssFeed;
 
 import javax.persistence.*;
@@ -52,14 +53,4 @@ public class User {
         this.password = password;
     }
 
-    @ManyToMany
-    private Collection<RssFeed> rssFeeds;
-
-    public Collection<RssFeed> getRssFeeds() {
-        return rssFeeds;
-    }
-
-    public void setRssFeeds(Collection<RssFeed> rssFeeds) {
-        this.rssFeeds = rssFeeds;
-    }
 }
