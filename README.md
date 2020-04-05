@@ -1,54 +1,54 @@
 ## Server :
 
 
-[checkbox:checked] User registration
+[x] User registration
 
-[checkbox:checked] User activation with confirmation link sent to email address
+[x] User activation with confirmation link sent to email address
 
-[checkbox:checked] Retrieve RSS feed from URL
+[x] Retrieve RSS feed from URL
 
-[checkbox:checked] Add feed
+[x] Add feed
 
-[checkbox:checked] Associate user with feeds
+[x] Associate user with feeds
 
-[checkbox:checked] Dissociate user from feed
+[x] Dissociate user from feed
 
-[checkbox:unchecked] Make API return JSON
+[] Make API return JSON
 
-[checkbox:unchecked] Enable creation of user folders for feeds
+[] Enable creation of user folders for feeds
 
-[checkbox:unchecked] Write script to automate DB setup
+[] Write script to automate DB setup
 
 
  
  ## Mobile app :
  
 
-[checkbox:unchecked] Connection
+[] Connection
 
-[checkbox:unchecked] Display user feeds
+[] Display user feeds
 
-[checkbox:unchecked] Add feed
+[] Add feed
 
-[checkbox:unchecked] Remove feed
+[] Remove feed
 
  
  ## Web interface :
 
 
-[checkbox:unchecked] Connection
+[] Connection
 
-[checkbox:unchecked] Display user feeds
+[] Display user feeds
 
-[checkbox:unchecked] Add feed
+[] Add feed
 
-[checkbox:unchecked] Remove feed
+[] Remove feed
  
  
  ## Desktop app :
  
  
-[checkbox:unchecked] Connection
-[checkbox:unchecked] Display user feeds
-[checkbox:unchecked] Add feed
-[checkbox:unchecked] Remove feed 
+[] Connection
+[] Display user feeds
+[] Add feed
+[] Remove feed 
