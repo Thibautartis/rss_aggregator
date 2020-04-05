@@ -1,40 +1,54 @@
 ## Server :
 
 
-[x] User registration
-[x] User activation with confirmation link sent to email address
-[x] Retrieve RSS feed from URL
-[x] Add feed
-[x] Associate user with feeds
-[x] Dissociate user from feed
-[] Make API return JSON
-[] Enable creation of user folders for feeds
-[] Write script to automate DB setup
+[checkbox:checked] User registration
+
+[checkbox:checked] User activation with confirmation link sent to email address
+
+[checkbox:checked] Retrieve RSS feed from URL
+
+[checkbox:checked] Add feed
+
+[checkbox:checked] Associate user with feeds
+
+[checkbox:checked] Dissociate user from feed
+
+[checkbox:unchecked] Make API return JSON
+
+[checkbox:unchecked] Enable creation of user folders for feeds
+
+[checkbox:unchecked] Write script to automate DB setup
 
 
  
  ## Mobile app :
  
 
-[] Connection
-[] Display user feeds
-[] Add feed
-[] Remove feed
+[checkbox:unchecked] Connection
+
+[checkbox:unchecked] Display user feeds
+
+[checkbox:unchecked] Add feed
+
+[checkbox:unchecked] Remove feed
 
  
  ## Web interface :
 
 
-[] Connection
-[] Display user feeds
-[] Add feed
-[] Remove feed
+[checkbox:unchecked] Connection
+
+[checkbox:unchecked] Display user feeds
+
+[checkbox:unchecked] Add feed
+
+[checkbox:unchecked] Remove feed
  
  
  ## Desktop app :
  
  
-[] Connection
-[] Display user feeds
-[] Add feed
-[] Remove feed 
+[checkbox:unchecked] Connection
+[checkbox:unchecked] Display user feeds
+[checkbox:unchecked] Add feed
+[checkbox:unchecked] Remove feed 
