@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.View;
 import rss_aggregator.server.rss.RssFeedRepository;
+import rss_aggregator.server.rss.RssGetter;
 import rss_aggregator.server.rss.model.RssFeed;
 import rss_aggregator.server.rss.view.RssFeedView;
 import rss_aggregator.server.userfeed.model.UserFeed;
@@ -33,7 +34,7 @@ public class RssFeedController {
         return view;
     }
 
-    @RequestMapping(value = "/addFeed", method = RequestMethod.GET)
+    @RequestMapping(value = "/addFeed", method = RequestMethod.POST)
     @ResponseBody
     public String addFeed(final HttpServletRequest request, @RequestParam("feed") final String feed) {
 
@@ -56,7 +57,7 @@ public class RssFeedController {
         return "/rss";
     }
 
-    @RequestMapping(value = "/rmFeed", method = RequestMethod.GET)
+    @RequestMapping(value = "/rmFeed", method = RequestMethod.POST)
     @ResponseBody
     public String removeFeed(final HttpServletRequest request, @RequestParam("feed") final String feed) {
 
@@ -76,7 +77,28 @@ public class RssFeedController {
 
         userFeedRepository.delete(userFeed);
 
+        if (userFeedRepository.findAllByFeed(rssFeed.getId()).size() == 0) {
+            feedRepository.delete(rssFeed);
+        }
+
         return "/rss";
+    }
+
+    @RequestMapping(value = "/getFeed", method = RequestMethod.GET)
+    @ResponseBody
+    public String getFeed(final HttpServletRequest request, @RequestParam("feed") final String feed) {
+
+        System.out.println(feed);
+        RssFeed rssFeed = feedRepository.findByFeed(feed);
+
+        System.out.println(rssFeed);
+        if (rssFeed == null) {
+            return "/error";
+        }
+
+        RssGetter rssGetter = new RssGetter();
+
+        return rssGetter.getRssFeed(rssFeed.getFeed()).toString();
     }
 
 }

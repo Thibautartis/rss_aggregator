@@ -49,6 +49,9 @@
  
  
 [] Connection
+
 [] Display user feeds
+
 [] Add feed
+
 [] Remove feed 

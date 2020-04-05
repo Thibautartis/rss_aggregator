@@ -46,12 +46,10 @@ public class UserService implements IUserService {
         return userRepository.save(user);
     }
 
-    public User getUser(final String verificationToken) {
+    public User getUserByVerificationToken(final String verificationToken) {
         final VerificationToken token = tokenRepository.findByToken(verificationToken);
-        if (token != null) {
-            return token.getUser();
-        }
-        return null;
+
+        return token != null ? token.getUser() : null;
     }
 
     @Override
@@ -60,13 +58,13 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public void saveRegisteredUser(User user) {
+    public void saveUser(User user) {
         userRepository.save(user);
     }
 
     @Override
     public void deleteUser(User user) {
-
+        userRepository.delete(user);
     }
 
     @Override
@@ -98,7 +96,8 @@ public class UserService implements IUserService {
 
     @Override
     public void changeUserPassword(User user, String password) {
-
+        user.setPassword(password);
+        saveUser(user);
     }
 
     @Override
@@ -119,7 +118,7 @@ public class UserService implements IUserService {
             return TOKEN_EXPIRED;
         }
         user.setActivated(true);
-        saveRegisteredUser(user);
+        saveUser(user);
         return TOKEN_VALID;
     }
 }

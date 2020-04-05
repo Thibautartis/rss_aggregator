@@ -10,11 +10,11 @@ public interface IUserService {
 
     User registerNewUserAccount(UserDTO accountDto) throws UserAlreadyExistsException;
 
-    User getUser(String verificationToken);
+    User getUserByVerificationToken(String verificationToken);
 
     VerificationToken getVerificationToken(String VerificationToken);
 
-    void saveRegisteredUser(User user);
+    void saveUser(User user);
 
     void deleteUser(User user);
 

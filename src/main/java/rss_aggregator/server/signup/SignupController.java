@@ -101,8 +101,9 @@ public class SignupController {
     @RequestMapping(value = "/resendSignupToken", method = RequestMethod.GET)
     @ResponseBody
     public String resendRegistrationToken(final HttpServletRequest request, @RequestParam("token") final String existingToken) {
+        // newToken is the old token after update
         final VerificationToken newToken = userService.generateNewVerificationToken(existingToken);
-        final User user = userService.getUser(newToken.getToken());
+        final User user = userService.getUserByVerificationToken(newToken.getToken());
 
         String confirmationUrl
                 = "/signupConfirm.html?token=" + newToken.getToken();

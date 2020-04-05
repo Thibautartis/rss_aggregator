@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import rss_aggregator.server.rss.RssFeedRepository;
 import rss_aggregator.server.rss.model.RssFeed;
 import rss_aggregator.server.userfeed.UserFeedRepository;
@@ -41,6 +42,16 @@ public class UserController {
         }
 
         model.addAttribute("feeds", feeds);
+        return "/user";
+    }
+
+    @RequestMapping(value = "/changePassword", method = RequestMethod.POST)
+    public String changePassword(final HttpServletRequest request, @RequestParam("password") final String password) {
+        User user = userService.findUserByEmail(request.getUserPrincipal().getName());
+
+        user.setPassword(password);
+        userService.saveUser(user);
+
         return "/user";
     }
 }
