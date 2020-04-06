@@ -1,11 +1,13 @@
 package rss_aggregator.server.users.controller;
 
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import rss_aggregator.server.rss.RssFeedRepository;
 import rss_aggregator.server.rss.model.RssFeed;
 import rss_aggregator.server.userfeed.UserFeedRepository;
@@ -18,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Controller
+@RestController
 public class UserController {
     @Autowired
     private IUserService userService;
@@ -42,7 +44,13 @@ public class UserController {
         }
 
         model.addAttribute("feeds", feeds);
-        return "/user";
+
+        JSONObject userJson = new JSONObject();
+
+        userJson.put("email", user.getEmail());
+        userJson.put("feeds", feeds);
+
+        return userJson.toString();
     }
 
     @RequestMapping(value = "/changePassword", method = RequestMethod.POST)

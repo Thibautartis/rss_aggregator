@@ -60,6 +60,8 @@ dependencies {
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-mail
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '2.2.5.RELEASE'
 
+    compile 'org.json:json:20190722'
+
 }
 
 mainClassName = 'rss_aggregator.server.RssFeedApplication'
