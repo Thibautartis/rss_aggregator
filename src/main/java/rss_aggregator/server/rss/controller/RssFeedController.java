@@ -61,7 +61,7 @@ public class RssFeedController {
 
         userFeedRepository.save(userFeed);
 
-        return "/rss";
+        return new JSONObject().put("status", "ok").toString();
     }
 
     @RequestMapping(value = "/rmFeed", method = RequestMethod.POST)
@@ -71,7 +71,7 @@ public class RssFeedController {
         RssFeed rssFeed = feedRepository.findByFeed(feed);
 
         if (rssFeed == null) {
-            return "/error";
+            return new JSONObject().put("status", "error").put("errno", "feed not found").toString();
         }
 
         User user = userService.findUserByEmail(request.getUserPrincipal().getName());
@@ -79,7 +79,7 @@ public class RssFeedController {
         UserFeed userFeed = userFeedRepository.findByUserAndFeed(user.get_id(), rssFeed.getId());
 
         if (userFeed == null) {
-            return "/error";
+            return new JSONObject().put("status", "error").put("errno", "user not subscribed to feed").toString();
         }
 
         userFeedRepository.delete(userFeed);
@@ -88,7 +88,7 @@ public class RssFeedController {
             feedRepository.delete(rssFeed);
         }
 
-        return "/rss";
+        return new JSONObject().put("status", "ok").toString();
     }
 
     @RequestMapping(value = "/getFeed", method = RequestMethod.GET)

@@ -60,6 +60,6 @@ public class UserController {
         user.setPassword(password);
         userService.saveUser(user);
 
-        return "/user";
+        return new JSONObject().put("status", "ok").toString();
     }
 }
