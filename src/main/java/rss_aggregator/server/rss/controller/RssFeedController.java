@@ -1,5 +1,10 @@
 package rss_aggregator.server.rss.controller;
 
+import com.rometools.rome.feed.rss.Item;
+import com.rometools.rome.feed.synd.SyndEntry;
+import com.rometools.rome.feed.synd.SyndFeed;
+import com.rometools.rome.feed.synd.SyndImage;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.View;
@@ -13,6 +18,8 @@ import rss_aggregator.server.users.IUserService;
 import rss_aggregator.server.users.model.User;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 public class RssFeedController {
@@ -98,7 +105,35 @@ public class RssFeedController {
 
         RssGetter rssGetter = new RssGetter();
 
-        return rssGetter.getRssFeed(rssFeed.getFeed()).toString();
+        SyndFeed syndFeed = rssGetter.getRssSyndFeed(rssFeed.getFeed());
+
+        List<Item> items = new ArrayList<>();
+        for (SyndEntry entry: syndFeed.getEntries()) {
+            Item item = new Item();
+
+            item.setTitle(entry.getTitle());
+            item.setPubDate(entry.getPublishedDate());
+            item.setLink(entry.getLink());
+            item.setAuthor(entry.getAuthor());
+            items.add(item);
+        }
+
+        JSONObject feedJson = new JSONObject();
+
+        SyndImage image = syndFeed.getImage();
+        JSONObject imageJson = new JSONObject();
+        imageJson.put("description", image.getDescription());
+        imageJson.put("link", image.getLink());
+        imageJson.put("title", image.getTitle());
+        imageJson.put("url", image.getUrl());
+
+        feedJson.put("author", syndFeed.getAuthor());
+        feedJson.put("description", syndFeed.getDescription());
+        feedJson.put("title", syndFeed.getTitle());
+        feedJson.put("image", imageJson);
+        feedJson.put("items", items);
+
+        return feedJson.toString();
     }
 
 }
