@@ -55,7 +55,13 @@ public class RssFeedController {
 
         User user = userService.findUserByEmail(request.getUserPrincipal().getName());
 
-        UserFeed userFeed = new UserFeed();
+        UserFeed userFeed = userFeedRepository.findByUserAndFeed(user.get_id(), rssFeed.getId());
+
+        if (userFeed != null) {
+            return new JSONObject().put("status", "ok").put("errno", "feed already bound to user").toString();
+        }
+
+        userFeed = new UserFeed();
         userFeed.setFeed(rssFeed.getId());
         userFeed.setUser(user.get_id());
 
