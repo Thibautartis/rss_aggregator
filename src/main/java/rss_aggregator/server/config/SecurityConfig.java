@@ -3,6 +3,7 @@ package rss_aggregator.server.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -33,10 +34,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.httpBasic()
-                .and()
+        http.httpBasic().and().csrf().disable()
                 .authorizeRequests()
-                    .antMatchers("/signup", "/signupConfirm", "/resendSignupToken").permitAll()
+                    .antMatchers("/login", "/signup", "/signupConfirm", "/resendSignupToken").permitAll()
+                    .antMatchers(HttpMethod.POST, "/login").permitAll()
                     .anyRequest().authenticated()
                     .and()
                 .formLogin()
