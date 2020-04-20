@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface IUserService {
 
-    User registerNewUserAccount(UserDTO accountDto) throws UserAlreadyExistsException;
+    User registerNewUserAccount(String username, String password) throws UserAlreadyExistsException;
 
     User getUserByVerificationToken(String verificationToken);
 

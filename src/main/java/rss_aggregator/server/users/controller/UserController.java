@@ -54,8 +54,10 @@ public class UserController {
     }
 
     @RequestMapping(value = "/changePassword", method = RequestMethod.POST)
-    public String changePassword(final HttpServletRequest request, @RequestParam("password") final String password) {
+    public String changePassword(final HttpServletRequest request) {
         User user = userService.findUserByEmail(request.getUserPrincipal().getName());
+
+        String password = request.getParameter("password");
 
         user.setPassword(password);
         userService.saveUser(user);

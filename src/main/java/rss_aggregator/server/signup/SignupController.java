@@ -1,5 +1,6 @@
 package rss_aggregator.server.signup;
 
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
@@ -24,6 +25,10 @@ import javax.validation.Valid;
 import org.springframework.context.MessageSource;
 import rss_aggregator.server.users.UserService;
 
+import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 
 @Controller
 public class SignupController {
@@ -42,6 +47,7 @@ public class SignupController {
     private JavaMailSender mailSender;
 
     @RequestMapping(value = "/signup", method = RequestMethod.GET)
+    @ResponseBody
     public String showRegistrationForm(WebRequest request, Model model) {
         UserDTO userDto = new UserDTO();
         model.addAttribute("user", userDto);
@@ -49,30 +55,41 @@ public class SignupController {
     }
 
     @RequestMapping(value = "/signup", method = RequestMethod.POST)
-    public ModelAndView registerUserAccount(@ModelAttribute("user") @Valid final UserDTO userDto, BindingResult result, WebRequest request, Errors errors) {
+    @ResponseBody
+    public String registerUser(final HttpServletRequest request) {
+        String user = request.getParameter("username");
+        String password = request.getParameter("password");
 
-        User registered = null;
-        if (!result.hasErrors()) {
-            registered = createUserAccount(userDto, result);
-        }
+        User registered = createUserAccount(user, password);
         if (registered == null) {
-            result.rejectValue("email", "message.regError");
+            return new JSONObject()
+                    .put("status", "error")
+                    .put("errno", "user already exists")
+                    .toString();
         }
 
-        try {
-            String appUrl = request.getContextPath();
-            eventPublisher.publishEvent(new OnSignupCompleteEvent(registered, request.getLocale(), appUrl));
-        } catch (Exception e) {
-            System.out.println(e);
-        }
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.submit(() -> {
+            String token = UUID.randomUUID().toString();
+            userService.createVerificationToken(registered, token);
 
-        return new ModelAndView(result.hasErrors() ? "signup" : "successRegister", "user", userDto);
+            String confirmationUrl
+                    = request.getContextPath() + "/signupConfirm.html?token=" + token;
+            String message = "Registration success, niquel, super";
+
+            new SendMail(mailSender, user, "super", "Signup confirmation",
+                    message + "\r\n" + "http://localhost:8080" + confirmationUrl);
+        });
+
+        return new JSONObject()
+                .put("status", "ok")
+                .toString();
     }
 
-    private User createUserAccount(UserDTO accountDto, BindingResult result) {
+    private User createUserAccount(String username, String password) {
         User registered = null;
         try {
-            registered = userService.registerNewUserAccount(accountDto);
+            registered = userService.registerNewUserAccount(username, password);
         } catch (EmailExistsException e) {
             System.out.println(e);
         }
@@ -80,22 +97,24 @@ public class SignupController {
     }
 
     @RequestMapping(value = "/signupConfirm", method=RequestMethod.GET)
+    @ResponseBody
     public String confirmSignup(WebRequest request, Model model, @RequestParam("token") String token) {
 
         String result = userService.validateVerificationToken(token);
+        JSONObject response = new JSONObject();
         switch (result) {
             case UserService.TOKEN_VALID:
-                result = "redirect:/login.html";
+                response.put("status", "ok");
                 break;
             case UserService.TOKEN_EXPIRED:
-                result = "redirect:/error.html?error=token_expired";
+                response.put("status", "error").put("errno", "token expired");
                 break;
             case UserService.TOKEN_INVALID:
-                result = "redirect:/error.html?error=token_invalid";
+                response.put("status", "error").put("errno", "token invalid");
                 break;
         }
 
-        return result;
+        return response.toString();
     }
 
     @RequestMapping(value = "/resendSignupToken", method = RequestMethod.GET)
@@ -111,7 +130,7 @@ public class SignupController {
 
         new SendMail(mailSender, user.getEmail(), "super", "resend Signup confirmation",
                 message + "\r\n" + "http://localhost:8080" + confirmationUrl);
-        return "redirect:/login.html";
+        return new JSONObject().put("status", "ok").toString();
     }
 
 }

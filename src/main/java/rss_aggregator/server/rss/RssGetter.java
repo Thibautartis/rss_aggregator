@@ -3,8 +3,10 @@ package rss_aggregator.server.rss;
 import com.rometools.rome.feed.rss.Item;
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
+import com.rometools.rome.feed.synd.SyndImage;
 import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
+import org.json.JSONObject;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -60,5 +62,50 @@ public class RssGetter {
         }
 
         return feed;
+    }
+
+    public JSONObject getRssFeedAsJson(String feed) {
+        RssGetter rssGetter = new RssGetter();
+
+        SyndFeed syndFeed = rssGetter.getRssSyndFeed(feed);
+
+        List<Item> items = new ArrayList<>();
+        for (SyndEntry entry : syndFeed.getEntries()) {
+            Item item = new Item();
+
+            item.setTitle(entry.getTitle());
+            item.setPubDate(entry.getPublishedDate());
+            item.setLink(entry.getLink());
+            item.setAuthor(entry.getAuthor());
+            items.add(item);
+        }
+
+        JSONObject feedJson = new JSONObject();
+
+        SyndImage image = syndFeed.getImage();
+        JSONObject imageJson = new JSONObject();
+        imageJson.put("description", image.getDescription());
+        imageJson.put("link", image.getLink());
+        imageJson.put("title", image.getTitle());
+        imageJson.put("url", image.getUrl());
+
+        feedJson.put("author", syndFeed.getAuthor());
+        feedJson.put("description", syndFeed.getDescription());
+        feedJson.put("title", syndFeed.getTitle());
+        feedJson.put("image", imageJson);
+        feedJson.put("items", items);
+
+        return feedJson;
+    }
+
+    public JSONObject getMultipleRssFeedAsJson(List<String> feeds) {
+        JSONObject feedsJson = new JSONObject();
+
+        int i = 0;
+        for (String feed : feeds) {
+            JSONObject feedAsJson = getRssFeedAsJson(feed);
+            feedsJson.put("feed" + i++, feedAsJson);
+        }
+        return feedsJson;
     }
 }

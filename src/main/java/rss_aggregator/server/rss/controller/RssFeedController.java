@@ -20,6 +20,7 @@ import rss_aggregator.server.users.model.User;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class RssFeedController {
@@ -33,17 +34,34 @@ public class RssFeedController {
     @Autowired
     private IUserService userService;
 
-    @Autowired
-    private RssFeedView view;
+    @RequestMapping(value = "/rss", method = RequestMethod.GET)
+    @ResponseBody
+    public String rssFeeds(final HttpServletRequest request) {
+        User user = userService.findUserByEmail(request.getUserPrincipal().getName());
 
-    @GetMapping("/rss")
-    public View GetFeed() {
-        return view;
+        List<UserFeed> userFeeds = userFeedRepository.findAllByUser(user.get_id());
+        ArrayList<String> feeds = new ArrayList<>();
+        for (UserFeed userFeed : userFeeds) {
+            Optional<RssFeed> rssFeed = feedRepository.findById(userFeed.getFeed());
+            feeds.add(rssFeed.get().getFeed());
+        }
+
+        RssGetter rssGetter = new RssGetter();
+        JSONObject jsonFeeds = rssGetter.getMultipleRssFeedAsJson(feeds);
+
+        JSONObject response = new JSONObject()
+                .put("status", "ok");
+
+        response.put("feeds", jsonFeeds);
+
+        return response.toString();
     }
 
     @RequestMapping(value = "/addFeed", method = RequestMethod.POST)
     @ResponseBody
-    public String addFeed(final HttpServletRequest request, @RequestParam("feed") final String feed) {
+    public String addFeed(final HttpServletRequest request) {
+
+        String feed = request.getParameter("feed");
 
         RssFeed rssFeed = feedRepository.findByFeed(feed);
 
@@ -72,7 +90,9 @@ public class RssFeedController {
 
     @RequestMapping(value = "/rmFeed", method = RequestMethod.POST)
     @ResponseBody
-    public String removeFeed(final HttpServletRequest request, @RequestParam("feed") final String feed) {
+    public String removeFeed(final HttpServletRequest request) {
+
+        String feed = request.getParameter("feed");
 
         RssFeed rssFeed = feedRepository.findByFeed(feed);
 
@@ -85,7 +105,10 @@ public class RssFeedController {
         UserFeed userFeed = userFeedRepository.findByUserAndFeed(user.get_id(), rssFeed.getId());
 
         if (userFeed == null) {
-            return new JSONObject().put("status", "error").put("errno", "user not subscribed to feed").toString();
+            return new JSONObject()
+                    .put("status", "error")
+                    .put("errno", "user not subscribed to feed")
+                    .toString();
         }
 
         userFeedRepository.delete(userFeed);
@@ -106,40 +129,22 @@ public class RssFeedController {
 
         System.out.println(rssFeed);
         if (rssFeed == null) {
-            return "/error";
+            return new JSONObject()
+                    .put("status", "error")
+                    .put("errno", "could not find feed")
+                    .toString();
         }
 
         RssGetter rssGetter = new RssGetter();
 
-        SyndFeed syndFeed = rssGetter.getRssSyndFeed(rssFeed.getFeed());
+        JSONObject feedJson = rssGetter.getRssFeedAsJson(rssFeed.getFeed());
 
-        List<Item> items = new ArrayList<>();
-        for (SyndEntry entry: syndFeed.getEntries()) {
-            Item item = new Item();
+        JSONObject response = new JSONObject()
+                .put("status", "ok")
+                .put("feed", feedJson);
 
-            item.setTitle(entry.getTitle());
-            item.setPubDate(entry.getPublishedDate());
-            item.setLink(entry.getLink());
-            item.setAuthor(entry.getAuthor());
-            items.add(item);
-        }
-
-        JSONObject feedJson = new JSONObject();
-
-        SyndImage image = syndFeed.getImage();
-        JSONObject imageJson = new JSONObject();
-        imageJson.put("description", image.getDescription());
-        imageJson.put("link", image.getLink());
-        imageJson.put("title", image.getTitle());
-        imageJson.put("url", image.getUrl());
-
-        feedJson.put("author", syndFeed.getAuthor());
-        feedJson.put("description", syndFeed.getDescription());
-        feedJson.put("title", syndFeed.getTitle());
-        feedJson.put("image", imageJson);
-        feedJson.put("items", items);
-
-        return feedJson.toString();
+        return response
+                .toString();
     }
 
 }

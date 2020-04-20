@@ -35,14 +35,14 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public User registerNewUserAccount(UserDTO accountDto) throws EmailExistsException {
-        if (emailExists(accountDto.getEmail())) {
-            throw new EmailExistsException("There is an account with that email adress: " + accountDto.getEmail());
+    public User registerNewUserAccount(String username, String password) throws EmailExistsException {
+        if (emailExists(username)) {
+            throw new EmailExistsException("There is an account with that email address: " + username);
         }
         final User user = new User();
 
-        user.setPassword(passwordEncoder.encode(accountDto.getPassword()));
-        user.setEmail(accountDto.getEmail());
+        user.setPassword(passwordEncoder.encode(password));
+        user.setEmail(username);
         return userRepository.save(user);
     }
 
