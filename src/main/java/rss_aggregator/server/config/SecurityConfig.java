@@ -50,18 +50,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .and()
                 .formLogin()
                     .loginPage("/login")
-                    .successHandler(new AuthenticationSuccessHandler() {
-                        @Override
-                        public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-                            response.setStatus(200);
-                        }
-                    })
-                    .failureHandler(new AuthenticationFailureHandler() {
-                        @Override
-                        public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-                            response.setStatus(401);
-                        }
-                    })
+                    .successHandler((request, response, authentication) -> response.setStatus(200))
+                    .failureHandler((request, response, exception) -> response.setStatus(401))
                     .permitAll()
                     .and()
                 .logout()
