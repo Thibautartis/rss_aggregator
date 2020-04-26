@@ -83,16 +83,18 @@ public class RssGetter {
         JSONObject feedJson = new JSONObject();
 
         SyndImage image = syndFeed.getImage();
-        JSONObject imageJson = new JSONObject();
-        imageJson.put("description", image.getDescription());
-        imageJson.put("link", image.getLink());
-        imageJson.put("title", image.getTitle());
-        imageJson.put("url", image.getUrl());
+        if (image != null) {
+            JSONObject imageJson = new JSONObject();
+            imageJson.put("description", image.getDescription());
+            imageJson.put("link", image.getLink());
+            imageJson.put("title", image.getTitle());
+            imageJson.put("url", image.getUrl());
+            feedJson.put("image", imageJson);
+        }
 
         feedJson.put("author", syndFeed.getAuthor());
         feedJson.put("description", syndFeed.getDescription());
         feedJson.put("title", syndFeed.getTitle());
-        feedJson.put("image", imageJson);
         feedJson.put("items", items);
 
         return feedJson;
