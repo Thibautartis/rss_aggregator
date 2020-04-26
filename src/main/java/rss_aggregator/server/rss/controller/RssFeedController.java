@@ -10,6 +10,7 @@ import rss_aggregator.server.userfeed.model.UserFeed;
 import rss_aggregator.server.userfeed.UserFeedRepository;
 import rss_aggregator.server.users.IUserService;
 import rss_aggregator.server.users.model.User;
+import rss_aggregator.server.validators.URLValidator;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -58,6 +59,12 @@ public class RssFeedController {
 
         String feed = request.getParameter("feed");
 
+        URLValidator validator = new URLValidator();
+        if (!validator.isValid(feed)) {
+            response.setStatus(400);
+            return new JSONObject().put("status", "error").put("error", "invalid url").toString();
+        }
+
         RssFeed rssFeed = feedRepository.findByFeed(feed);
 
         if (rssFeed == null) {
@@ -93,6 +100,7 @@ public class RssFeedController {
         RssFeed rssFeed = feedRepository.findByFeed(feed);
 
         if (rssFeed == null) {
+            response.setStatus(400);
             return new JSONObject().put("status", "error").put("errno", "feed not found").toString();
         }
 

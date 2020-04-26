@@ -10,7 +10,7 @@ public class URLValidator {
     private Matcher matcher;
     private static final String URL_PATTERN = "https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)\n";
 
-    private boolean isValid(final String url) {
+    public boolean isValid(final String url) {
         pattern = Pattern.compile(URL_PATTERN);
         matcher = pattern.matcher(url);
         return matcher.matches();
