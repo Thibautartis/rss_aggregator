@@ -16,6 +16,8 @@ import rss_aggregator.server.exceptions.EmailExistsException;
 import rss_aggregator.server.users.IUserService;
 import rss_aggregator.server.users.UserService;
 import rss_aggregator.server.users.model.User;
+import rss_aggregator.server.validators.EmailValidator;
+import rss_aggregator.server.validators.PasswordValidator;
 import rss_aggregator.server.verificationtoken.model.VerificationToken;
 
 import javax.servlet.http.HttpServletRequest;
@@ -43,12 +45,26 @@ public class SignupController {
 
     @RequestMapping(value = "/signup", method = RequestMethod.POST)
     @ResponseBody
-    public String registerUser(final HttpServletRequest request) {
+    public String registerUser(final HttpServletRequest request, HttpServletResponse response) {
         String user = request.getParameter("username");
         String password = request.getParameter("password");
+        String confirm = request.getParameter("confirm");
+
+        EmailValidator emailValidator = new EmailValidator();
+        if (!emailValidator.isValid(user)) {
+            response.setStatus(400);
+            return new JSONObject().put("status", "error").put("error", "invalid email").toString();
+        }
+
+        PasswordValidator passwordValidator = new PasswordValidator();
+        if (password == null || !passwordValidator.isValid(password, confirm)) {
+            response.setStatus(400);
+            return new JSONObject().put("status", "error").put("error", "invalid password").toString();
+        }
 
         User registered = createUserAccount(user, password);
         if (registered == null) {
+            response.setStatus(400);
             return new JSONObject()
                     .put("status", "error")
                     .put("errno", "user already exists")
