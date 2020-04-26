@@ -1,23 +1,18 @@
 package rss_aggregator.server.rss.controller;
 
-import com.rometools.rome.feed.rss.Item;
-import com.rometools.rome.feed.synd.SyndEntry;
-import com.rometools.rome.feed.synd.SyndFeed;
-import com.rometools.rome.feed.synd.SyndImage;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.View;
 import rss_aggregator.server.rss.RssFeedRepository;
 import rss_aggregator.server.rss.RssGetter;
 import rss_aggregator.server.rss.model.RssFeed;
-import rss_aggregator.server.rss.view.RssFeedView;
 import rss_aggregator.server.userfeed.model.UserFeed;
 import rss_aggregator.server.userfeed.UserFeedRepository;
 import rss_aggregator.server.users.IUserService;
 import rss_aggregator.server.users.model.User;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -59,7 +54,7 @@ public class RssFeedController {
 
     @RequestMapping(value = "/addFeed", method = RequestMethod.POST)
     @ResponseBody
-    public String addFeed(final HttpServletRequest request) {
+    public String addFeed(final HttpServletRequest request, HttpServletResponse response) {
 
         String feed = request.getParameter("feed");
 
@@ -76,6 +71,7 @@ public class RssFeedController {
         UserFeed userFeed = userFeedRepository.findByUserAndFeed(user.get_id(), rssFeed.getId());
 
         if (userFeed != null) {
+            response.setStatus(400);
             return new JSONObject().put("status", "error").put("errno", "feed already bound to user").toString();
         }
 
@@ -90,7 +86,7 @@ public class RssFeedController {
 
     @RequestMapping(value = "/rmFeed", method = RequestMethod.POST)
     @ResponseBody
-    public String removeFeed(final HttpServletRequest request) {
+    public String removeFeed(final HttpServletRequest request, HttpServletResponse response) {
 
         String feed = request.getParameter("feed");
 
@@ -105,6 +101,7 @@ public class RssFeedController {
         UserFeed userFeed = userFeedRepository.findByUserAndFeed(user.get_id(), rssFeed.getId());
 
         if (userFeed == null) {
+            response.setStatus(400);
             return new JSONObject()
                     .put("status", "error")
                     .put("errno", "user not subscribed to feed")
@@ -122,13 +119,14 @@ public class RssFeedController {
 
     @RequestMapping(value = "/getFeed", method = RequestMethod.GET)
     @ResponseBody
-    public String getFeed(final HttpServletRequest request, @RequestParam("feed") final String feed) {
+    public String getFeed(final HttpServletRequest request, HttpServletResponse response, @RequestParam("feed") final String feed) {
 
         System.out.println(feed);
         RssFeed rssFeed = feedRepository.findByFeed(feed);
 
         System.out.println(rssFeed);
         if (rssFeed == null) {
+            response.setStatus(400);
             return new JSONObject()
                     .put("status", "error")
                     .put("errno", "could not find feed")
@@ -139,11 +137,11 @@ public class RssFeedController {
 
         JSONObject feedJson = rssGetter.getRssFeedAsJson(rssFeed.getFeed());
 
-        JSONObject response = new JSONObject()
+        JSONObject responseJson = new JSONObject()
                 .put("status", "ok")
                 .put("feed", feedJson);
 
-        return response
+        return responseJson
                 .toString();
     }
 

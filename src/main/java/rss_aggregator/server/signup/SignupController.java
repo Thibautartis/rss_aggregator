@@ -6,21 +6,17 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.servlet.ModelAndView;
 import rss_aggregator.server.SendMail;
 import rss_aggregator.server.exceptions.EmailExistsException;
 import rss_aggregator.server.verificationtoken.model.VerificationToken;
 import rss_aggregator.server.users.IUserService;
 import rss_aggregator.server.users.model.User;
-import rss_aggregator.server.users.UserDTO;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.context.MessageSource;
 import rss_aggregator.server.users.UserService;
@@ -45,14 +41,6 @@ public class SignupController {
 
     @Autowired
     private JavaMailSender mailSender;
-
-    @RequestMapping(value = "/signup", method = RequestMethod.GET)
-    @ResponseBody
-    public String showRegistrationForm(WebRequest request, Model model) {
-        UserDTO userDto = new UserDTO();
-        model.addAttribute("user", userDto);
-        return "signup";
-    }
 
     @RequestMapping(value = "/signup", method = RequestMethod.POST)
     @ResponseBody
@@ -98,28 +86,36 @@ public class SignupController {
 
     @RequestMapping(value = "/signupConfirm", method=RequestMethod.GET)
     @ResponseBody
-    public String confirmSignup(WebRequest request, Model model, @RequestParam("token") String token) {
+    public String confirmSignup(HttpServletResponse response, @RequestParam("token") String token) {
 
         String result = userService.validateVerificationToken(token);
-        JSONObject response = new JSONObject();
+        JSONObject responseJson = new JSONObject();
         switch (result) {
             case UserService.TOKEN_VALID:
-                response.put("status", "ok");
+                responseJson.put("status", "ok");
                 break;
             case UserService.TOKEN_EXPIRED:
-                response.put("status", "error").put("errno", "token expired");
+                response.setStatus(400);
+                responseJson.put("status", "error").put("errno", "token expired");
                 break;
             case UserService.TOKEN_INVALID:
-                response.put("status", "error").put("errno", "token invalid");
+                response.setStatus(400);
+                responseJson.put("status", "error").put("errno", "token invalid");
                 break;
         }
 
-        return response.toString();
+        return responseJson.toString();
     }
 
     @RequestMapping(value = "/resendSignupToken", method = RequestMethod.GET)
     @ResponseBody
-    public String resendRegistrationToken(final HttpServletRequest request, @RequestParam("token") final String existingToken) {
+    public String resendRegistrationToken(final HttpServletRequest request, HttpServletResponse response, @RequestParam("token") final String existingToken) {
+
+        if (userService.getVerificationToken(existingToken) == null) {
+            response.setStatus(400);
+            return new JSONObject().put("status", "error").put("error", "token does not exist").toString();
+        }
+
         // newToken is the old token after update
         final VerificationToken newToken = userService.generateNewVerificationToken(existingToken);
         final User user = userService.getUserByVerificationToken(newToken.getToken());
