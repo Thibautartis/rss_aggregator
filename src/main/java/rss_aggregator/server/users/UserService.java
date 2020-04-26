@@ -4,12 +4,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import rss_aggregator.server.exceptions.EmailExistsException;
+import rss_aggregator.server.userfeed.UserFeedRepository;
+import rss_aggregator.server.userfeed.model.UserFeed;
 import rss_aggregator.server.users.model.User;
 import rss_aggregator.server.verificationtoken.model.VerificationToken;
 import rss_aggregator.server.verificationtoken.VerificationTokenRepository;
 
 import javax.transaction.Transactional;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -25,6 +28,9 @@ public class UserService implements IUserService {
 
     @Autowired
     private VerificationTokenRepository tokenRepository;
+
+    @Autowired
+    private UserFeedRepository userFeedRepository;
 
     public static final String TOKEN_INVALID = "invalidToken";
     public static final String TOKEN_EXPIRED = "expired";
@@ -64,6 +70,10 @@ public class UserService implements IUserService {
 
     @Override
     public void deleteUser(User user) {
+        List<UserFeed> userFeedList = userFeedRepository.findAllByUser(user.get_id());
+        for (UserFeed feed : userFeedList) {
+            userFeedRepository.delete(feed);
+        }
         userRepository.delete(user);
     }
 

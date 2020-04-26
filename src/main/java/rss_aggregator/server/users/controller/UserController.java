@@ -70,4 +70,12 @@ public class UserController {
 
         return new JSONObject().put("status", "ok").toString();
     }
+
+    @RequestMapping(value = "/rmUser", method = RequestMethod.POST)
+    public String rmUser(final HttpServletRequest request) {
+        User user = userService.findUserByEmail(request.getUserPrincipal().getName());
+        userService.deleteUser(user);
+
+        return new JSONObject().put("status", "ok").toString();
+    }
 }
