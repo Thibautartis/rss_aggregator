@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 public class URLValidator {
     private Pattern pattern;
     private Matcher matcher;
-    private static final String URL_PATTERN = "https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)\n";
+    private static final String URL_PATTERN = "https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)";
 
     public boolean isValid(final String url) {
         pattern = Pattern.compile(URL_PATTERN);

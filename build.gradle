@@ -62,6 +62,8 @@ dependencies {
 
     compile 'org.json:json:20190722'
 
+    testImplementation "org.junit.platform:junit-platform-commons"
+
 }
 
 mainClassName = 'rss_aggregator.server.RssFeedApplication'
