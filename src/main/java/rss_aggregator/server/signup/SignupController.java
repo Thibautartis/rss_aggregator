@@ -4,23 +4,22 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import rss_aggregator.server.SendMail;
 import rss_aggregator.server.exceptions.EmailExistsException;
-import rss_aggregator.server.verificationtoken.model.VerificationToken;
 import rss_aggregator.server.users.IUserService;
+import rss_aggregator.server.users.UserService;
 import rss_aggregator.server.users.model.User;
+import rss_aggregator.server.verificationtoken.model.VerificationToken;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.context.MessageSource;
-import rss_aggregator.server.users.UserService;
-
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
