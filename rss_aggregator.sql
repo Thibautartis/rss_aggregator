@@ -65,6 +65,19 @@ CREATE TABLE `verification_token` (
   UNIQUE KEY `verification_token_token_uindex` (`token`),
   UNIQUE KEY `verification_token_id_uindex` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `password_lost_token`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `password_lost_token` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `expiry_date` date NOT NULL,
+    `token` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `user_id` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
+    UNIQUE KEY `password_lost_token_uindex` (`token`),
+    UNIQUE KEY `password_lost_id_uindex` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

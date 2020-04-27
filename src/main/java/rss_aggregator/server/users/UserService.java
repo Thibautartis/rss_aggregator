@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import rss_aggregator.server.exceptions.EmailExistsException;
+import rss_aggregator.server.passwordlosttoken.PasswordLostTokenRepository;
+import rss_aggregator.server.passwordlosttoken.model.PasswordLostToken;
 import rss_aggregator.server.userfeed.UserFeedRepository;
 import rss_aggregator.server.userfeed.model.UserFeed;
 import rss_aggregator.server.users.model.User;
@@ -27,7 +29,10 @@ public class UserService implements IUserService {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private VerificationTokenRepository tokenRepository;
+    private VerificationTokenRepository verificationTokenRepository;
+
+    @Autowired
+    private PasswordLostTokenRepository passwordLostTokenRepository;
 
     @Autowired
     private UserFeedRepository userFeedRepository;
@@ -53,14 +58,14 @@ public class UserService implements IUserService {
     }
 
     public User getUserByVerificationToken(final String verificationToken) {
-        final VerificationToken token = tokenRepository.findByToken(verificationToken);
+        final VerificationToken token = verificationTokenRepository.findByToken(verificationToken);
 
         return token != null ? token.getUser() : null;
     }
 
     @Override
     public VerificationToken getVerificationToken(final String VerificationToken) {
-        return tokenRepository.findByToken(VerificationToken);
+        return verificationTokenRepository.findByToken(VerificationToken);
     }
 
     @Override
@@ -80,18 +85,37 @@ public class UserService implements IUserService {
     @Override
     public void createVerificationToken(User user, String token) {
         VerificationToken myToken = new VerificationToken(token, user);
-        tokenRepository.save(myToken);
+        verificationTokenRepository.save(myToken);
         System.out.println("token created : " + token);
     }
 
     @Override
     public VerificationToken generateNewVerificationToken(final String existingVerificationToken) {
-        VerificationToken vToken = tokenRepository.findByToken(existingVerificationToken);
+        VerificationToken vToken = verificationTokenRepository.findByToken(existingVerificationToken);
         vToken.updateToken(UUID.randomUUID()
                 .toString());
-        vToken = tokenRepository.save(vToken);
+        vToken = verificationTokenRepository.save(vToken);
         System.out.println("token updated : " + vToken);
         return vToken;
+    }
+
+    @Override
+    public User getUserByPasswordLostToken(String passwordLostToken) {
+        final PasswordLostToken token = passwordLostTokenRepository.findByToken(passwordLostToken);
+
+        return token != null ? token.getUser() : null;
+    }
+
+    @Override
+    public PasswordLostToken getPasswordLostToken(String passwordLostToken) {
+        return passwordLostTokenRepository.findByToken(passwordLostToken);
+    }
+
+    @Override
+    public void createPasswordLostToken(User user, String token) {
+        PasswordLostToken myToken = new PasswordLostToken(token, user);
+        passwordLostTokenRepository.save(myToken);
+        System.out.println("token created : " + token);
     }
 
     @Override
@@ -111,11 +135,6 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public boolean checkIfValidOldPassword(User user, String password) {
-        return false;
-    }
-
-    @Override
     public String validateVerificationToken(String token) {
 
         VerificationToken verificationToken = getVerificationToken(token);
@@ -125,10 +144,29 @@ public class UserService implements IUserService {
         User user = verificationToken.getUser();
         Calendar cal = Calendar.getInstance();
         if ((verificationToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
+            verificationTokenRepository.delete(verificationToken);
             return TOKEN_EXPIRED;
         }
+        verificationTokenRepository.delete(verificationToken);
         user.setActivated(true);
         saveUser(user);
+        return TOKEN_VALID;
+    }
+
+    @Override
+    public String validatePasswordLostToken(String token) {
+
+        PasswordLostToken passwordLostToken = getPasswordLostToken(token);
+        if (passwordLostToken == null) {
+            return TOKEN_INVALID;
+        }
+        User user = passwordLostToken.getUser();
+        Calendar cal = Calendar.getInstance();
+        if ((passwordLostToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
+            passwordLostTokenRepository.delete(passwordLostToken);
+            return TOKEN_EXPIRED;
+        }
+        passwordLostTokenRepository.delete(passwordLostToken);
         return TOKEN_VALID;
     }
 }

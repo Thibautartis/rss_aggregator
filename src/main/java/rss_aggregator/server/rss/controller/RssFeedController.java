@@ -32,6 +32,29 @@ public class RssFeedController {
 
     @RequestMapping(value = "/rss", method = RequestMethod.GET)
     @ResponseBody
+    public String rssFeedsGet(final HttpServletRequest request) {
+        User user = userService.findUserByEmail(request.getUserPrincipal().getName());
+
+        List<UserFeed> userFeeds = userFeedRepository.findAllByUser(user.get_id());
+        ArrayList<String> feeds = new ArrayList<>();
+        for (UserFeed userFeed : userFeeds) {
+            Optional<RssFeed> rssFeed = feedRepository.findById(userFeed.getFeed());
+            feeds.add(rssFeed.get().getFeed());
+        }
+
+        RssGetter rssGetter = new RssGetter();
+        JSONObject jsonFeeds = rssGetter.getMultipleRssFeedAsJson(feeds);
+
+        JSONObject response = new JSONObject()
+                .put("status", "ok");
+
+        response.put("feeds", jsonFeeds);
+
+        return response.toString();
+    }
+
+    @RequestMapping(value = "/rss", method = RequestMethod.POST)
+    @ResponseBody
     public String rssFeeds(final HttpServletRequest request) {
         User user = userService.findUserByEmail(request.getUserPrincipal().getName());
 

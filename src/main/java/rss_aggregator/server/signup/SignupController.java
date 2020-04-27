@@ -135,8 +135,7 @@ public class SignupController {
         final VerificationToken newToken = userService.generateNewVerificationToken(existingToken);
         final User user = userService.getUserByVerificationToken(newToken.getToken());
 
-        String confirmationUrl
-                = "/signupConfirm.html?token=" + newToken.getToken();
+        String confirmationUrl = "/signupConfirm.html?token=" + newToken.getToken();
         String message = "Registration success, niquel, super";
 
         new SendMail(mailSender, user.getEmail(), "super", "resend Signup confirmation",

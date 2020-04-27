@@ -87,4 +87,8 @@ test {
     }
 }
 
+jar {
+    enabled=true
+}
+
 mainClassName = 'rss_aggregator.server.RssFeedApplication'
