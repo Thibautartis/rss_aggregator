@@ -12,9 +12,9 @@
     You have been logged out.
 </div>
 <form th:action="@{/signup}" method="post">
-    <div><label> User Name : <input type="text" name="email"/> </label></div>
+    <div><label> User Name : <input type="text" name="username"/> </label></div>
     <div><label> Password: <input type="password" name="password"/> </label></div>
-    <div><label> Password: <input type="password" name="matchingPassword"/> </label></div>
+    <div><label> Password: <input type="password" name="confirm"/> </label></div>
     <div><input type="submit" value="Sign In"/></div>
 </form>
 <p>Already registered ? Click <a th:href="@{/login}">here</a> to login</p>

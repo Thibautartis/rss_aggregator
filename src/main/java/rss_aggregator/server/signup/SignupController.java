@@ -43,6 +43,11 @@ public class SignupController {
     @Autowired
     private JavaMailSender mailSender;
 
+    @RequestMapping(value = "/signup", method = RequestMethod.GET)
+    public String signup(final HttpServletRequest request) {
+        return "signup";
+    }
+
     @RequestMapping(value = "/signup", method = RequestMethod.POST)
     @ResponseBody
     public String registerUser(final HttpServletRequest request, HttpServletResponse response) {
