@@ -1,7 +1,7 @@
 
 # Created by https://www.gitignore.io/api/java,linux,maven,gradle,database,intellij+all
 # Edit at https://www.gitignore.io/?templates=java,linux,maven,gradle,database,intellij+all
-
+./src/main/resources/application.properties
 ### Database ###
 *.accdb
 *.db
