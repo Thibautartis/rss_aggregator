@@ -40,6 +40,8 @@ public class UserController {
     @Autowired
     private JavaMailSender mailSender;
 
+    static final String INVALID_PASSWORD = "Password should have a length of 6 characters and have 1 number and 1 capital letter";
+
     @RequestMapping(value = "/user", method = RequestMethod.GET)
     public String showUser(final HttpServletRequest request, final Model model) {
         User user = userService.findUserByEmail(request.getUserPrincipal().getName());
@@ -71,7 +73,7 @@ public class UserController {
         PasswordValidator validator = new PasswordValidator();
         if (password == null || !validator.isValid(password, confirm)) {
             response.setStatus(400);
-            return new JSONObject().put("status", "error").put("error", "invalid password").toString();
+            return new JSONObject().put("status", "error").put("error", INVALID_PASSWORD).toString();
         }
 
         userService.changeUserPassword(user, password);
@@ -125,7 +127,7 @@ public class UserController {
         PasswordValidator validator = new PasswordValidator();
         if (password == null || !validator.isValid(password, confirm)) {
             response.setStatus(400);
-            return new JSONObject().put("status", "error").put("error", "invalid password").toString();
+            return new JSONObject().put("status", "error").put("error", INVALID_PASSWORD).toString();
         }
 
         userService.changeUserPassword(user, password);
