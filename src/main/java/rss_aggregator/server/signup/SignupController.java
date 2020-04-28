@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import rss_aggregator.server.SendMail;
 import rss_aggregator.server.exceptions.EmailExistsException;
 import rss_aggregator.server.users.IUserService;
@@ -34,18 +35,28 @@ public class SignupController {
     private IUserService userService;
 
     @Autowired
-    ApplicationEventPublisher eventPublisher;
-
-    @Qualifier("messageSource")
-    @Autowired
-    MessageSource messages;
-
-    @Autowired
     private JavaMailSender mailSender;
 
     @RequestMapping(value = "/signup", method = RequestMethod.GET)
     public String signup(final HttpServletRequest request) {
         return "signup";
+    }
+
+    @RequestMapping(value = "/signupWeb", method = RequestMethod.POST)
+    public String registerUserWeb(final HttpServletRequest request, RedirectAttributes redirectAttributes) {
+        String user = request.getParameter("username");
+        String password = request.getParameter("password");
+        String confirm = request.getParameter("confirm");
+
+        String result = processRegisterUser(user, password, confirm, request.getContextPath());
+
+        if (!result.equals("ok")) {
+            redirectAttributes.addAttribute("error", result);
+            return "redirect:/error";
+        }
+
+        redirectAttributes.addAttribute("msg", "A confirmation link has been sent to you email to validate your registration");
+        return "redirect:/login";
     }
 
     @RequestMapping(value = "/signup", method = RequestMethod.POST)
@@ -55,43 +66,52 @@ public class SignupController {
         String password = request.getParameter("password");
         String confirm = request.getParameter("confirm");
 
-        EmailValidator emailValidator = new EmailValidator();
-        if (!emailValidator.isValid(user)) {
+        String result = processRegisterUser(user, password, confirm, request.getContextPath());
+
+        if (!result.equals("ok")) {
             response.setStatus(400);
-            return new JSONObject().put("status", "error").put("error", "invalid email").toString();
+            return new JSONObject().put("status", "error").put("error", result).toString();
         }
-
-        PasswordValidator passwordValidator = new PasswordValidator();
-        if (password == null || !passwordValidator.isValid(password, confirm)) {
-            response.setStatus(400);
-            return new JSONObject().put("status", "error").put("error", "invalid password").toString();
-        }
-
-        User registered = createUserAccount(user, password);
-        if (registered == null) {
-            response.setStatus(400);
-            return new JSONObject()
-                    .put("status", "error")
-                    .put("errno", "user already exists")
-                    .toString();
-        }
-
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(() -> {
-            String token = UUID.randomUUID().toString();
-            userService.createVerificationToken(registered, token);
-
-            String confirmationUrl
-                    = request.getContextPath() + "/signupConfirm.html?token=" + token;
-            String message = "Registration success, niquel, super";
-
-            new SendMail(mailSender, user, "super", "Signup confirmation",
-                    message + "\r\n" + "http://localhost:8080" + confirmationUrl);
-        });
 
         return new JSONObject()
                 .put("status", "ok")
                 .toString();
+    }
+
+    private String processRegisterUser(final String user, final String password, final String confirm, final String contextPath) {
+        EmailValidator emailValidator = new EmailValidator();
+        if (!emailValidator.isValid(user)) {
+            return "Invalid email";
+        }
+
+        PasswordValidator passwordValidator = new PasswordValidator();
+        if (password == null || !passwordValidator.isValid(password, confirm)) {
+            return "Invalid password";
+        }
+
+        User registered = createUserAccount(user, password);
+        if (registered == null) {
+            return "User already exists";
+        }
+
+        sendRegistrationConfirmationMail(contextPath, registered);
+
+        return "ok";
+    }
+
+    private void sendRegistrationConfirmationMail(final String contextPath, final User user) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.submit(() -> {
+            String token = UUID.randomUUID().toString();
+            userService.createVerificationToken(user, token);
+
+            String confirmationUrl
+                    = contextPath + "/signupConfirm.html?token=" + token;
+            String message = "Registration success, niquel, super";
+
+            new SendMail(mailSender, user.getEmail(), "super", "Signup confirmation",
+                    message + "\r\n" + "http://localhost:8080" + confirmationUrl);
+        });
     }
 
     private User createUserAccount(String username, String password) {
@@ -106,34 +126,48 @@ public class SignupController {
 
     @RequestMapping(value = "/signupConfirm", method=RequestMethod.GET)
     @ResponseBody
-    public String confirmSignup(HttpServletResponse response, @RequestParam("token") String token) {
+    public String confirmSignup(HttpServletResponse response, @RequestParam("token") final String token, RedirectAttributes redirectAttributes) {
+
+        String page, key, value;
 
         String result = userService.validateVerificationToken(token);
-        JSONObject responseJson = new JSONObject();
         switch (result) {
             case UserService.TOKEN_VALID:
-                responseJson.put("status", "ok");
+                page = "login";
+                key = "msg";
+                value = "Signup confirmed";
                 break;
             case UserService.TOKEN_EXPIRED:
                 response.setStatus(400);
-                responseJson.put("status", "error").put("errno", "token expired");
+                page = "error";
+                key = "error";
+                value = "Token expired";
                 break;
             case UserService.TOKEN_INVALID:
                 response.setStatus(400);
-                responseJson.put("status", "error").put("errno", "token invalid");
+                page = "error";
+                key = "error";
+                value = "Invalid token";
                 break;
+            default:
+                response.setStatus(500);
+                page = "error";
+                key = "error";
+                value = "Unknown error";
         }
 
-        return responseJson.toString();
+        redirectAttributes.addAttribute(key, value);
+        return "redirect:/" + page;
     }
 
     @RequestMapping(value = "/resendSignupToken", method = RequestMethod.GET)
-    @ResponseBody
-    public String resendRegistrationToken(final HttpServletRequest request, HttpServletResponse response, @RequestParam("token") final String existingToken) {
+    public String resendRegistrationToken(HttpServletResponse response, @RequestParam("token") final String existingToken, RedirectAttributes redirectAttributes) {
 
+        System.out.println("resendsignuptoken");
         if (userService.getVerificationToken(existingToken) == null) {
             response.setStatus(400);
-            return new JSONObject().put("status", "error").put("error", "token does not exist").toString();
+            redirectAttributes.addAttribute("error", "invalid token");
+            return "redirect:/error";
         }
 
         // newToken is the old token after update
@@ -145,7 +179,9 @@ public class SignupController {
 
         new SendMail(mailSender, user.getEmail(), "super", "resend Signup confirmation",
                 message + "\r\n" + "http://localhost:8080" + confirmationUrl);
-        return new JSONObject().put("status", "ok").toString();
+
+        redirectAttributes.addAttribute("msg", "Registration token re-sent");
+        return "redirect:/login";
     }
 
 }

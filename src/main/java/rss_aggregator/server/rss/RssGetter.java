@@ -8,6 +8,7 @@ import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
 import org.json.JSONObject;
 
+import javax.validation.constraints.NotNull;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +31,7 @@ public class RssGetter {
         return feed;
     }
 
-    public List<SyndFeed> getMultipleRssSyndFeed(final List<String> src) {
+    public List<SyndFeed> getMultipleRssSyndFeed(@NotNull final List<String> src) {
         List<SyndFeed> feeds = new ArrayList<>();
         for (String str : src) {
             feeds.add(getRssSyndFeed(str));
@@ -54,7 +55,7 @@ public class RssGetter {
         return feed;
     }
 
-    public List<Item> getMultipleRssFeed(List<String> src)
+    public List<Item> getMultipleRssFeed(@NotNull final List<String> src)
     {
         List<Item> feed = new ArrayList<>();
         for (String str : src) {
@@ -64,7 +65,7 @@ public class RssGetter {
         return feed;
     }
 
-    public JSONObject getRssFeedAsJson(String feed) {
+    public JSONObject getRssFeedAsJson(final String feed) {
         RssGetter rssGetter = new RssGetter();
 
         SyndFeed syndFeed = rssGetter.getRssSyndFeed(feed);
@@ -100,7 +101,7 @@ public class RssGetter {
         return feedJson;
     }
 
-    public JSONObject getMultipleRssFeedAsJson(List<String> feeds) {
+    public JSONObject getMultipleRssFeedAsJson(@NotNull final List<String> feeds) {
         JSONObject feedsJson = new JSONObject();
 
         int i = 0;
@@ -109,5 +110,41 @@ public class RssGetter {
             feedsJson.put("feed" + i++, feedAsJson);
         }
         return feedsJson;
+    }
+
+    public WebFeed getRssFeedAsWebFeed(final String feed) {
+        RssGetter rssGetter = new RssGetter();
+
+        SyndFeed syndFeed = rssGetter.getRssSyndFeed(feed);
+
+        List<WebFeed.WebFeedEntry> items = new ArrayList<>();
+        for (SyndEntry entry : syndFeed.getEntries()) {
+            WebFeed.WebFeedEntry item = new WebFeed.WebFeedEntry();
+
+            item.setTitle(entry.getTitle());
+            item.setPubDate(entry.getPublishedDate().toString());
+            item.setLink(entry.getLink());
+            item.setAuthor(entry.getAuthor());
+            items.add(item);
+        }
+
+        WebFeed webFeed = new WebFeed();
+
+        webFeed.setAuthor(syndFeed.getAuthor());
+        webFeed.setDescription(syndFeed.getDescription());
+        webFeed.setTitle(syndFeed.getTitle());
+        webFeed.setEntries(items);
+
+        return webFeed;
+    }
+
+    public List<WebFeed> getMultipleRssFeedAsWebFeed(@NotNull final List<String> feeds) {
+        List<WebFeed> webFeeds = new ArrayList<>();
+
+        for (String feed: feeds) {
+            WebFeed webFeed = getRssFeedAsWebFeed(feed);
+            webFeeds.add(webFeed);
+        }
+        return webFeeds;
     }
 }

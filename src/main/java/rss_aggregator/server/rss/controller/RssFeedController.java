@@ -1,10 +1,13 @@
 package rss_aggregator.server.rss.controller;
 
+import com.rometools.rome.feed.synd.SyndFeed;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import rss_aggregator.server.rss.RssFeedRepository;
 import rss_aggregator.server.rss.RssGetter;
+import rss_aggregator.server.rss.WebFeed;
 import rss_aggregator.server.rss.model.RssFeed;
 import rss_aggregator.server.userfeed.UserFeedRepository;
 import rss_aggregator.server.userfeed.model.UserFeed;
@@ -31,8 +34,7 @@ public class RssFeedController {
     private IUserService userService;
 
     @RequestMapping(value = "/rss", method = RequestMethod.GET)
-    @ResponseBody
-    public String rssFeedsGet(final HttpServletRequest request) {
+    public String rssFeedsGet(final HttpServletRequest request, Model model) {
         User user = userService.findUserByEmail(request.getUserPrincipal().getName());
 
         List<UserFeed> userFeeds = userFeedRepository.findAllByUser(user.get_id());
@@ -43,14 +45,11 @@ public class RssFeedController {
         }
 
         RssGetter rssGetter = new RssGetter();
-        JSONObject jsonFeeds = rssGetter.getMultipleRssFeedAsJson(feeds);
+        List<WebFeed> webFeeds = rssGetter.getMultipleRssFeedAsWebFeed(feeds);
 
-        JSONObject response = new JSONObject()
-                .put("status", "ok");
+        model.addAttribute("feeds", webFeeds);
 
-        response.put("feeds", jsonFeeds);
-
-        return response.toString();
+        return "rss";
     }
 
     @RequestMapping(value = "/rss", method = RequestMethod.POST)
@@ -66,6 +65,7 @@ public class RssFeedController {
         }
 
         RssGetter rssGetter = new RssGetter();
+
         JSONObject jsonFeeds = rssGetter.getMultipleRssFeedAsJson(feeds);
 
         JSONObject response = new JSONObject()
@@ -148,11 +148,12 @@ public class RssFeedController {
         return new JSONObject().put("status", "ok").toString();
     }
 
-    @RequestMapping(value = "/getFeed", method = RequestMethod.GET)
+    @RequestMapping(value = "/getFeed", method = RequestMethod.POST)
     @ResponseBody
-    public String getFeed(final HttpServletRequest request, HttpServletResponse response, @RequestParam("feed") final String feed) {
+    public String getFeed(final HttpServletRequest request, HttpServletResponse response) {
 
-        System.out.println(feed);
+        String feed = request.getParameter("feed");
+
         RssFeed rssFeed = feedRepository.findByFeed(feed);
 
         System.out.println(rssFeed);

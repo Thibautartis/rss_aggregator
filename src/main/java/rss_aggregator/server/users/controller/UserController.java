@@ -6,6 +6,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import rss_aggregator.server.SendMail;
 import rss_aggregator.server.passwordlosttoken.model.PasswordLostToken;
@@ -44,8 +45,33 @@ public class UserController {
 
     @RequestMapping(value = "/user", method = RequestMethod.GET)
     public String showUser(final HttpServletRequest request, final Model model) {
+
         User user = userService.findUserByEmail(request.getUserPrincipal().getName());
 
+        List<String> feeds = getFeeds(user);
+
+        model.addAttribute("username", user.getEmail());
+        model.addAttribute("feeds", feeds);
+
+        return "user";
+    }
+
+    @RequestMapping(value = "/user", method = RequestMethod.POST)
+    @ResponseBody
+    public String sendUser(final HttpServletRequest request) {
+        User user = userService.findUserByEmail(request.getUserPrincipal().getName());
+
+        List<String> feeds = getFeeds(user);
+
+        JSONObject userJson = new JSONObject();
+
+        userJson.put("email", user.getEmail());
+        userJson.put("feeds", feeds);
+
+        return new JSONObject().put("user", userJson).put("status", "ok").toString();
+    }
+
+    private List<String> getFeeds(final User user) {
         List<UserFeed> userFeeds = userFeedRepository.findAllByUser(user.get_id());
         ArrayList<String> feeds = new ArrayList<>();
 
@@ -54,17 +80,11 @@ public class UserController {
             feeds.add(feed.get().getFeed());
         }
 
-        model.addAttribute("feeds", feeds);
-
-        JSONObject userJson = new JSONObject();
-
-        userJson.put("email", user.getEmail());
-        userJson.put("feeds", feeds);
-
-        return userJson.toString();
+        return feeds;
     }
 
     @RequestMapping(value = "/changePassword", method = RequestMethod.POST)
+    @ResponseBody
     public String changePassword(final HttpServletRequest request, HttpServletResponse response) {
         User user = userService.findUserByEmail(request.getUserPrincipal().getName());
 
@@ -82,6 +102,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/passwordLost", method = RequestMethod.POST)
+    @ResponseBody
     public String passwordLost(final HttpServletRequest request) {
 
         String email = request.getParameter("username");
@@ -105,6 +126,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/changePasswordLost", method = RequestMethod.POST)
+    @ResponseBody
     public String changePasswordList(final HttpServletRequest request, HttpServletResponse response) {
 
         String token = request.getParameter("token");
@@ -136,6 +158,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/rmUser", method = RequestMethod.POST)
+    @ResponseBody
     public String rmUser(final HttpServletRequest request) {
         User user = userService.findUserByEmail(request.getUserPrincipal().getName());
         userService.deleteUser(user);
