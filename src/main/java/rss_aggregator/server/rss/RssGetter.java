@@ -101,15 +101,14 @@ public class RssGetter {
         return feedJson;
     }
 
-    public JSONObject getMultipleRssFeedAsJson(@NotNull final List<String> feeds) {
-        JSONObject feedsJson = new JSONObject();
+    public List<JSONObject> getMultipleRssFeedAsJson(@NotNull final List<String> feeds) {
 
-        int i = 0;
+        List<JSONObject> jsonFeeds = new ArrayList<>();
         for (String feed : feeds) {
             JSONObject feedAsJson = getRssFeedAsJson(feed);
-            feedsJson.put("feed" + i++, feedAsJson);
+            jsonFeeds.add(feedAsJson);
         }
-        return feedsJson;
+        return jsonFeeds;
     }
 
     public WebFeed getRssFeedAsWebFeed(final String feed) {

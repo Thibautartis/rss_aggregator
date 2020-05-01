@@ -66,7 +66,7 @@ public class RssFeedController {
 
         RssGetter rssGetter = new RssGetter();
 
-        JSONObject jsonFeeds = rssGetter.getMultipleRssFeedAsJson(feeds);
+        List<JSONObject> jsonFeeds = rssGetter.getMultipleRssFeedAsJson(feeds);
 
         JSONObject response = new JSONObject()
                 .put("status", "ok");
