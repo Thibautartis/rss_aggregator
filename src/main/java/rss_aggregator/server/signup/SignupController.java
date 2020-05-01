@@ -3,6 +3,7 @@ package rss_aggregator.server.signup;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -30,6 +31,9 @@ import java.util.concurrent.Executors;
 
 @Controller
 public class SignupController {
+
+    @Value("${rss_aggregator.ip}")
+    private String ip;
 
     @Autowired
     private IUserService userService;
@@ -110,7 +114,7 @@ public class SignupController {
             String message = "Registration success, niquel, super";
 
             new SendMail(mailSender, user.getEmail(), "super", "Signup confirmation",
-                    message + "\r\n" + "http://localhost:8080" + confirmationUrl);
+                    message + "\r\n" + "http://" + ip + ":8080" + confirmationUrl);
         });
     }
 
@@ -178,7 +182,7 @@ public class SignupController {
         String message = "Registration success, niquel, super";
 
         new SendMail(mailSender, user.getEmail(), "super", "resend Signup confirmation",
-                message + "\r\n" + "http://localhost:8080" + confirmationUrl);
+                message + "\r\n" + "http://" + ip + ":8080" + confirmationUrl);
 
         redirectAttributes.addAttribute("msg", "Registration token re-sent");
         return "redirect:/login";
