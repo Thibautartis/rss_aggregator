@@ -5,67 +5,73 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
-import rss_aggregator.server.rss.RssFeedRepository;
-import rss_aggregator.server.rss.model.RssFeed;
+import rss_aggregator.server.userfeed.UserFeedRepository;
+import rss_aggregator.server.userfeed.model.UserFeed;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
-public class UserFeedRepository {
+public class UserFeedRepositoryTest {
 
     @Autowired
-    UserFeedRepository rssFeedRepository;
+    UserFeedRepository userFeedRepository;
 
     @Test
-    public void addFeed() {
+    public void addUserFeed() {
 
-        RssFeed feed = new RssFeed();
-        feed.setFeed("test");
+        UserFeed userFeed = new UserFeed();
+        userFeed.setFeed(42L);
+        userFeed.setUser(24L);
 
-        rssFeedRepository.save(feed);
+        userFeedRepository.save(userFeed);
 
-        RssFeed found = rssFeedRepository.findByFeed(feed.getFeed());
-        assertThat(found).isEqualTo(feed);
+        List<UserFeed> found = userFeedRepository.findAllByFeed(userFeed.getFeed());
+        assertThat(found.get(0)).isEqualTo(userFeed);
 
     }
 
     @Test
-    public void addAndRmFeed() {
+    public void addAndRmUserFeed() {
 
-        RssFeed feed = new RssFeed();
-        feed.setFeed("test");
+        UserFeed userFeed = new UserFeed();
+        userFeed.setFeed(42L);
+        userFeed.setUser(24L);
 
-        rssFeedRepository.save(feed);
+        userFeedRepository.save(userFeed);
 
-        RssFeed found = rssFeedRepository.findByFeed(feed.getFeed());
-        assertThat(found).isNotEqualTo(null);
+        List<UserFeed> found = userFeedRepository.findAllByFeed(userFeed.getFeed());
+        assertThat(found.isEmpty()).isFalse();
 
-        rssFeedRepository.delete(feed);
+        userFeedRepository.delete(userFeed);
 
-        found = rssFeedRepository.findByFeed(feed.getFeed());
-        assertThat(found).isEqualTo(null);
+        found = userFeedRepository.findAllByFeed(userFeed.getFeed());
+        assertThat(found.isEmpty()).isTrue();
 
     }
 
     @Test
-    public void addAndUpdateFeed() {
+    public void addAndUpdateUserFeed() {
 
-        RssFeed feed = new RssFeed();
-        feed.setFeed("test");
+        UserFeed userFeed = new UserFeed();
+        userFeed.setFeed(42L);
+        userFeed.setUser(24L);
 
-        rssFeedRepository.save(feed);
+        userFeedRepository.save(userFeed);
 
-        RssFeed found = rssFeedRepository.findByFeed(feed.getFeed());
-        assertThat(found).isEqualTo(feed);
+        List<UserFeed> foundList = userFeedRepository.findAllByFeed(userFeed.getFeed());
+        assertThat(foundList.isEmpty()).isFalse();
 
-        found.setFeed("tset");
+        UserFeed found = foundList.get(0);
+        found.setFeed(84L);
 
-        rssFeedRepository.save(found);
-        assertThat(found).isEqualTo(feed);
+        userFeedRepository.save(found);
+        assertThat(found).isEqualTo(userFeed);
 
-        found = rssFeedRepository.findByFeed("test");
-        assertThat(found).isEqualTo(null);
+        foundList = userFeedRepository.findAllByFeed(42L);
+        assertThat(foundList.isEmpty()).isTrue();
     }
 
 }
