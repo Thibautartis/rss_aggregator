@@ -1,0 +1,35 @@
+version: '3'
+services:
+  mysql_rss:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: rss_aggregator
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: mypassword
+    volumes:
+      - ./server_rss/rss_aggregator.sql:/docker-entrypoint-initdb.d/1-schema.sql
+    networks:
+      - samplenetwork
+
+  reverseproxy_rss:
+    container_name: reverseproxy_rss
+    build: reverse-proxy
+    ports:
+      - 80:80
+    restart: always
+    networks:
+      - samplenetwork
+
+  serveur_rss:
+    container_name: server_rss
+    build: server_rss
+    restart: always
+    networks:
+      - samplenetwork
+
+networks:
+  samplenetwork:
+    driver: bridge
