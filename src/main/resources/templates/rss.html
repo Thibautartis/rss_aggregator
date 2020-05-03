@@ -7,10 +7,28 @@
   <head>
     <meta charset="UTF-8" />
     <title>Niqueeeeel</title>
-  </head>
-  <body>
-    <div th:each="feed : ${feeds}">
-      <p th:text="${feed}">// user</p>
+    <link rel="stylesheet" href="css/rss.css"/>
+
+</head>
+<body>
+
+<div class="rss-header">
+    <div class="form">
+        <form class="rss-form" th:action="@{/postrss}" method="post">
+            <input type="text" name="title" placeholder="Title"/>
+            <input type="text" name="text" placeholder="Rss address"/>
+            <button>Post</button>
+        </form>
     </div>
-  </body>
+</div>
+<li th:each="${feeds}">
+
+</li>
+<div class="rss-main">
+    <img class="rss-image" alt="Toto le bendo" src="./test.jpg">
+    <text class="rss-text">Test</text>
+    <img class="rss-image" alt="Toto le bendo" src="./test.jpg">
+    <text class="rss-text">Test</text>
+</div>
+</body>
 </html>
