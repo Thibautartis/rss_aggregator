@@ -117,15 +117,24 @@
     <div class="signup-page">
       <div class="form">
         <form th:action="@{/signup}" method="post" class="login-form">
-          <input type="text" name="username" placeholder="name" />
+          <input type="text" name="username" placeholder="email" />
           <input type="password" name="password" placeholder="password" />
-          <input type="text" name="email" placeholder="email address" />
-          <button>create</button>
+          <input
+            type="password"
+            name="confirm"
+            placeholder="confirm password"
+          />
+          <button onclick="redirect()">create</button>
           <p class="message">
             Already registered? <a th:href="@{/login}">Sign In</a>
           </p>
         </form>
       </div>
     </div>
+    <script>
+      function redirect() {
+        document.location.pathname = "/login";
+      }
+    </script>
   </body>
 </html>
