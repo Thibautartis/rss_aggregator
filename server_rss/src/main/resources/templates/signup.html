@@ -114,24 +114,18 @@
     </style>
   </head>
   <body>
-    <div th:if="${param.error}">
-      Invalid username and password.
+    <div class="signup-page">
+      <div class="form">
+        <form th:action="@{/signup}" method="post" class="login-form">
+          <input type="text" name="username" placeholder="name" />
+          <input type="password" name="password" placeholder="password" />
+          <input type="text" name="email" placeholder="email address" />
+          <button>create</button>
+          <p class="message">
+            Already registered? <a th:href="@{/login}">Sign In</a>
+          </p>
+        </form>
+      </div>
     </div>
-    <div th:if="${param.logout}">
-      You have been logged out.
-    </div>
-    <form th:action="@{/signup}" method="post">
-      <div>
-        <label> User Name : <input type="text" name="username" /> </label>
-      </div>
-      <div>
-        <label> Password: <input type="password" name="password" /> </label>
-      </div>
-      <div>
-        <label> Password: <input type="password" name="confirm" /> </label>
-      </div>
-      <div><input type="submit" value="Sign In" /></div>
-    </form>
-    <p>Already registered ? Click <a th:href="@{/login}">here</a> to login</p>
   </body>
 </html>
