@@ -81,6 +81,10 @@ public class RssFeedController {
     public String addFeed(final HttpServletRequest request, HttpServletResponse response) {
 
         String feed = request.getParameter("feed");
+        if (feed == null) {
+            response.setStatus(400);
+            return new JSONObject().put("status", "error").put("error", "feed parameter missing").toString();
+        }
 
         URLValidator validator = new URLValidator();
         if (!validator.isValid(feed)) {
@@ -120,6 +124,11 @@ public class RssFeedController {
 
         String feed = request.getParameter("feed");
 
+        if (feed == null) {
+            response.setStatus(400);
+            return new JSONObject().put("status", "error").put("error", "feed parameter missing").toString();
+        }
+
         RssFeed rssFeed = feedRepository.findByFeed(feed);
 
         if (rssFeed == null) {
@@ -153,6 +162,11 @@ public class RssFeedController {
     public String getFeed(final HttpServletRequest request, HttpServletResponse response) {
 
         String feed = request.getParameter("feed");
+
+        if (feed == null) {
+            response.setStatus(400);
+            return new JSONObject().put("status", "error").put("error", "feed parameter missing").toString();
+        }
 
         RssFeed rssFeed = feedRepository.findByFeed(feed);
 

@@ -1,11 +1,12 @@
 package rss_aggregator.server.rss;
 
+import java.util.Date;
 import java.util.List;
 
 public class WebFeed {
     public static class WebFeedEntry {
         String title;
-        String pubDate;
+        Date pubDate;
         String link;
         String author;
 
@@ -17,11 +18,11 @@ public class WebFeed {
             this.title = title;
         }
 
-        public String getPubDate() {
+        public Date getPubDate() {
             return pubDate;
         }
 
-        public void setPubDate(String pubDate) {
+        public void setPubDate(Date pubDate) {
             this.pubDate = pubDate;
         }
 
