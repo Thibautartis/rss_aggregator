@@ -1,32 +1,42 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
-      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
-<head>
-    <title>Spring Security Example </title>
-    <link rel="stylesheet" href="css/login.css"/>
-</head>
-<body>
-<div class="login-page">
-    <div th:if="${param.error}">
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:th="https://www.thymeleaf.org"
+  xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+>
+  <head>
+    <title>Spring Security Example</title>
+    <!-- <link rel="stylesheet" href="./css/login.css" /> -->
+    <link
+      class="custom-link"
+      href="./css/login.css"
+      th:href="@{/resources/css/task/task.css}"
+    />
+  </head>
+  <body>
+    <div class="login-page">
+      <div th:if="${param.error}">
         Invalid username and password.
-    </div>
-    <div th:if="${param.logout}">
+      </div>
+      <div th:if="${param.logout}">
         You have been logged out.
-    </div>
-    <div class="form">
+      </div>
+      <div class="form">
         <form class="login-form" th:action="@{/login}" method="post">
-            <input type="text" name="username" placeholder="username"/>
-            <input type="password" name="password" placeholder="password"/>
-            <button>login</button>
-            <p class="message">Not registered? <a th:href="@{/signup}">Create an account</a></p>
+          <input type="text" name="username" placeholder="username" />
+          <input type="password" name="password" placeholder="password" />
+          <button>login</button>
+          <p class="message">
+            Not registered? <a th:href="@{/signup}">Create an account</a>
+          </p>
         </form>
+      </div>
     </div>
-</div>
-<!-- <form th:action="@{/login}" method="post">
+    <!-- <form th:action="@{/login}" method="post">
     <div><label> User Name : <input type="text" name="username"/> </label></div>
     <div><label> Password: <input type="password" name="password"/> </label></div>
     <div><input type="submit" value="Sign In"/></div>
 </form>
 <p>No account ? Click <a th:href="@{/signup}">here</a> to register</p> -->
-</body>
+  </body>
 </html>
