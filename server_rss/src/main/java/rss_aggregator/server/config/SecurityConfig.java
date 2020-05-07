@@ -34,7 +34,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.httpBasic().and().csrf().disable()
                 .authorizeRequests()
                     .antMatchers("/login", "/signup", "/signupConfirm", "/resendSignupToken", "/error").permitAll()
-                    .antMatchers(HttpMethod.POST, "/login", "/passwordLost", "/changePasswordLost").permitAll()
+                    .antMatchers(HttpMethod.POST, "/login", "/passwordLost", "/changePasswordLost", "/signupWeb").permitAll()
                     .anyRequest().authenticated()
                     .and()
                 .formLogin()
