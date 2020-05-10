@@ -201,7 +201,7 @@
     <div class="rss-feeds">
       <tr th:each="feed : ${feeds}">
         <td><a href="${feed.title}" th:text="${feed.title}">Title :</a></td>
-        <form th:action="@{/rmFeed}" method="get">
+        <form th:action="@{/rmFeed}" method="post">
           <input type="hidden" name="feed" value="${feed.link}" />
           <button>Remove</button>
         </form>
