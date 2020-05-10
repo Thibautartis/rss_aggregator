@@ -126,17 +126,12 @@
         <form class="" th:action="@{/login}" method="post">
           <input type="text" name="username" placeholder="username" />
           <input type="password" name="password" placeholder="password" />
-          <button onclick="redirect()">login</button>
+          <button>login</button>
           <p class="message">
             Not registered yet ? <a th:href="@{/signup}">Create an account</a>
           </p>
         </form>
       </div>
     </div>
-    <script>
-      function redirect() {
-        document.location.pathname = "/rss";
-      }
-    </script>
   </body>
 </html>
