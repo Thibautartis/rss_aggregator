@@ -17,6 +17,7 @@ import rss_aggregator.server.userfeed.model.UserFeed;
 import rss_aggregator.server.users.IUserService;
 import rss_aggregator.server.users.model.User;
 import rss_aggregator.server.validators.PasswordValidator;
+import org.springframework.stereotype.Controller;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,7 +28,7 @@ import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@RestController
+@Controller
 public class UserController {
     @Autowired
     private IUserService userService;
@@ -108,6 +109,13 @@ public class UserController {
 
         return new JSONObject().put("status", "ok").toString();
     }
+
+    @RequestMapping(value = "/changePassword", method = RequestMethod.GET)
+    public String changePasswordWeb(final HttpServletRequest request, HttpServletResponse response) {
+
+        return "changePassword";
+    }
+
 
     @RequestMapping(value = "/passwordLost", method = RequestMethod.POST)
     @ResponseBody

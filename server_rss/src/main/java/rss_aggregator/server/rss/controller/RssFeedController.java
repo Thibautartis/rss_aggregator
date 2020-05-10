@@ -14,6 +14,7 @@ import rss_aggregator.server.userfeed.model.UserFeed;
 import rss_aggregator.server.users.IUserService;
 import rss_aggregator.server.users.model.User;
 import rss_aggregator.server.validators.URLValidator;
+import org.springframework.stereotype.Controller;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@RestController
+@Controller
 public class RssFeedController {
 
     @Autowired
@@ -34,7 +35,7 @@ public class RssFeedController {
     private IUserService userService;
 
     @RequestMapping(value = "/rss", method = RequestMethod.GET)
-    public String rssFeedsGet(final HttpServletRequest request, Model model) {
+    public String rss(final HttpServletRequest request, Model model) {
         User user = userService.findUserByEmail(request.getUserPrincipal().getName());
 
         List<UserFeed> userFeeds = userFeedRepository.findAllByUser(user.get_id());
@@ -47,9 +48,78 @@ public class RssFeedController {
         RssGetter rssGetter = new RssGetter();
         List<WebFeed> webFeeds = rssGetter.getMultipleRssFeedAsWebFeed(feeds);
 
+        System.out.println(webFeeds.toString());
         model.addAttribute("feeds", webFeeds);
 
         return "rss";
+    }
+
+     @RequestMapping(value = "/addFeed", method = RequestMethod.GET)
+    public String addFeedWeb(final HttpServletRequest request, Model model) {
+        String feed = request.getParameter("feed");
+        if (feed == null) {
+           return "redirect:/error";
+        }
+
+        URLValidator validator = new URLValidator();
+        if (!validator.isValid(feed)) {
+            return "redirect:/error";
+        }
+
+        RssFeed rssFeed = feedRepository.findByFeed(feed);
+
+        if (rssFeed == null) {
+            rssFeed = new RssFeed();
+            rssFeed.setFeed(feed);
+            feedRepository.save(rssFeed);
+        }
+
+        User user = userService.findUserByEmail(request.getUserPrincipal().getName());
+
+        UserFeed userFeed = userFeedRepository.findByUserAndFeed(user.get_id(), rssFeed.getId());
+
+        if (userFeed != null) {
+            return "redirect:/error";
+        }
+
+        userFeed = new UserFeed();
+        userFeed.setFeed(rssFeed.getId());
+        userFeed.setUser(user.get_id());
+
+        userFeedRepository.save(userFeed);
+
+        return "redirect:/rss";
+    }
+
+     @RequestMapping(value = "/rmFeed", method = RequestMethod.GET)
+    public String rmFeedWeb(final HttpServletRequest request, Model model) {
+         String feed = request.getParameter("feed");
+
+        if (feed == null) {
+           return "redirect:/error";
+        }
+
+        RssFeed rssFeed = feedRepository.findByFeed(feed);
+
+        if (rssFeed == null) {
+          return "redirect:/error";
+        }
+
+        User user = userService.findUserByEmail(request.getUserPrincipal().getName());
+
+        UserFeed userFeed = userFeedRepository.findByUserAndFeed(user.get_id(), rssFeed.getId());
+
+        if (userFeed == null) {
+          return "redirect:/error";
+        }
+
+        userFeedRepository.delete(userFeed);
+
+        if (userFeedRepository.findAllByFeed(rssFeed.getId()).size() == 0) {
+            feedRepository.delete(rssFeed);
+        }
+
+        return "redirect:/rss";
     }
 
     @RequestMapping(value = "/rss", method = RequestMethod.POST)
@@ -73,7 +143,7 @@ public class RssFeedController {
 
         response.put("feeds", jsonFeeds);
 
-        return response.toString();
+        return response.toString() + "toto";
     }
 
     @RequestMapping(value = "/addFeed", method = RequestMethod.POST)

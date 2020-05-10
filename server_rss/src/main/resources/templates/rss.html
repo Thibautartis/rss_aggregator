@@ -8,6 +8,71 @@
     <meta charset="UTF-8" />
     <title>Rss Agg</title>
     <style>
+      .rss-feeds {
+        margin-top: 30px;
+        width: 60%;
+      }
+
+      .thumbnail {
+        height: 20px;
+        width: 20px;
+      }
+      .collapsible {
+        background-color: #eee;
+        color: #444;
+        cursor: pointer;
+        padding: 18px;
+        width: 100%;
+        border: none;
+        text-align: right;
+        outline: none;
+        font-size: 15px;
+      }
+
+      .active,
+      .collapsible:hover {
+        background-color: #ccc;
+      }
+
+      .content {
+        padding: 0 18px;
+        display: none;
+        overflow: hidden;
+        background-color: #ffffff;
+      }
+
+      .image:before {
+        content: "";
+        display: inline-block;
+        height: 100%;
+        vertical-align: middle;
+        min-height: 50px;
+      }
+
+      .image {
+        -moz-box-sizing: border-box;
+        border: none;
+        float: right;
+        margin-bottom: 10px;
+        padding: 10px;
+        color: #000000;
+      }
+
+      .delete {
+        position: relative;
+        vertical-align: middle;
+        display: inline-block;
+      }
+
+      .delete:after {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        height: 20px;
+        width: 20px;
+      }
+
       rss-page {
         padding: 8% 0 0;
         margin: auto;
@@ -114,21 +179,36 @@
     </style>
   </head>
   <body>
+    <div class="image">
+      <div class="icon-remove blue delete">
+        <a href="/changePassword">
+          <img
+            class="thumbnail"
+            src="https://www.materialui.co/materialIcons/action/settings_white_192x192.png"
+          />
+        </a>
+      </div>
+    </div>
     <div class="rss-header">
       <div class="form">
-        <form class="rss-form" th:action="@{/addFeed}" method="post">
+        <form class="rss-form" th:action="@{/addFeed}" method="get">
           <input type="text" name="title" placeholder="Title" />
           <input type="text" name="feed" placeholder="Rss address" />
           <button>Add</button>
         </form>
       </div>
     </div>
-    <li th:each="${feeds}"></li>
-    <div class="rss-main">
-      <a href="https://www.partypoker.com/blog/en/partypokercom-blog.html">
-        <img class="rss-image" alt="Toto le bendo" src="./test.jpg" />
-        <text class="rss-text">Learn Poker</text>
-      </a>
+    <div class="rss-feeds">
+      <tr th:each="feed : ${feeds}">
+        <td><a href="${feed.title}" th:text="${feed.title}">Title :</a></td>
+        <form th:action="@{/rmFeed}" method="get">
+          <input type="hidden" name="feed" value="${feed.title}" />
+          <button>Remove</button>
+        </form>
+        <div class="content">
+          <p th:text="${feed.description}">Description :</p>
+        </div>
+      </tr>
     </div>
   </body>
 </html>
