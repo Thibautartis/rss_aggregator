@@ -1,57 +1,14 @@
-## Server :
+# RSS AGGREGATOR
+# Client
+Desktop: https://github.com/lokoum/java_credits
+Android:  https://github.com/zoukie33/jrssfeed
+Web: this repo
 
+# API
+Check our insomnia.json file
 
-[x] User registration
+# Deploy
+docker-compose up --build
 
-[x] User activation with confirmation link sent to email address
-
-[x] Retrieve RSS feed from URL
-
-[x] Add feed
-
-[x] Associate user with feeds
-
-[x] Dissociate user from feed
-
-[] Make API return JSON
-
-[] Enable creation of user folders for feeds
-
-[] Write script to automate DB setup
-
-
- 
- ## Mobile app :
- 
-
-[] Connection
-
-[] Display user feeds
-
-[] Add feed
-
-[] Remove feed
-
- 
- ## Web interface :
-
-
-[] Connection
-
-[] Display user feeds
-
-[] Add feed
-
-[] Remove feed
- 
- 
- ## Desktop app :
- 
- 
-[] Connection
-
-[] Display user feeds
-
-[] Add feed
-
-[] Remove feed 
+# Author
+axel.brunel@epitech.eu thibaut.artis@epitech.eu romain.gadrat@epitech.eu quentin.juquet@epitech.eu Lucas.troncy@epitech.eu
