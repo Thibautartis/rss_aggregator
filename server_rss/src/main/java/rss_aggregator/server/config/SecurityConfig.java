@@ -39,7 +39,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .and()
                 .formLogin()
                     .loginPage("/login")
-                    .successHandler((request, response, authentication) -> response.setStatus(200))
+                    .successHandler((request, response, authentication) -> response.sendRedirect("/rss"))
                     .failureHandler((request, response, exception) -> response.setStatus(401))
                     .permitAll()
                     .and()
