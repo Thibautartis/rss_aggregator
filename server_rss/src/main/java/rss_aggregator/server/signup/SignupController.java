@@ -49,7 +49,14 @@ public class SignupController {
         String password = request.getParameter("password");
         String confirm = request.getParameter("confirm");
 
-        String result = processRegisterUser(user, password, confirm, request.getContextPath());
+        String result = checkUserPasswordConfirm(user, password, confirm);
+
+        if (!result.equals("ok")) {
+            redirectAttributes.addAttribute("error", result);
+            return "redirect:/error";
+        }
+
+        result = processRegisterUser(user, password, confirm, request.getContextPath());
 
         if (!result.equals("ok")) {
             redirectAttributes.addAttribute("error", result);
@@ -67,7 +74,14 @@ public class SignupController {
         String password = request.getParameter("password");
         String confirm = request.getParameter("confirm");
 
-        String result = processRegisterUser(user, password, confirm, request.getContextPath());
+        String result = checkUserPasswordConfirm(user, password, confirm);
+
+        if (!result.equals("ok")) {
+            response.setStatus(400);
+            return new JSONObject().put("status", "error").put("error", result).toString();
+        }
+
+        result = processRegisterUser(user, password, confirm, request.getContextPath());
 
         if (!result.equals("ok")) {
             response.setStatus(400);
@@ -77,6 +91,22 @@ public class SignupController {
         return new JSONObject()
                 .put("status", "ok")
                 .toString();
+    }
+
+    private String checkUserPasswordConfirm(String user, String password, String confirm) {
+
+        String prefix = "parameter \"";
+        String suffix = "\" is missing";
+        if (user == null) {
+            return prefix + "user" + suffix;
+        }
+        if (password == null) {
+            return prefix + "password" + suffix;
+        }
+        if (confirm == null) {
+            return prefix + "confirm" + suffix;
+        }
+        return "ok";
     }
 
     private String processRegisterUser(final String user, final String password, final String confirm, final String contextPath) {

@@ -1,9 +1,7 @@
 package rss_aggregator.server.rss;
 
 import com.rometools.rome.feed.rss.Item;
-import com.rometools.rome.feed.synd.SyndEntry;
-import com.rometools.rome.feed.synd.SyndFeed;
-import com.rometools.rome.feed.synd.SyndImage;
+import com.rometools.rome.feed.synd.*;
 import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
 import org.json.JSONObject;
@@ -11,6 +9,8 @@ import org.json.JSONObject;
 import javax.validation.constraints.NotNull;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 public class RssGetter {
@@ -26,6 +26,15 @@ public class RssGetter {
         } catch (Exception ex) {
             ex.printStackTrace();
             System.out.println("ERROR: " + ex.getMessage());
+
+            feed = new SyndFeedImpl();
+            feed.setFeedType("failed to get");
+            feed.setTitle("Error");
+            feed.setDescription("Could not retrieve " + src + " feed");
+            SyndEntry entry = new SyndEntryImpl();
+            entry.setTitle("BREAKING NEWS : An error has occurred while getting your feed maybe it is down ?");
+            entry.setLink(src);
+            feed.setEntries(Arrays.asList(entry));
         }
 
         return feed;
@@ -74,10 +83,18 @@ public class RssGetter {
         for (SyndEntry entry : syndFeed.getEntries()) {
             Item item = new Item();
 
-            item.setTitle(entry.getTitle());
-            item.setPubDate(entry.getPublishedDate());
-            item.setLink(entry.getLink());
-            item.setAuthor(entry.getAuthor());
+            String title = entry.getTitle();
+            if (title != null)
+                item.setTitle(title);
+            Date date = entry.getPublishedDate();
+            if (date != null)
+                item.setPubDate(date);
+            String link = entry.getLink();
+            if (link != null)
+                item.setLink(link);
+            String author = entry.getAuthor();
+            if (author != null)
+                item.setAuthor(author);
             items.add(item);
         }
 
@@ -120,10 +137,18 @@ public class RssGetter {
         for (SyndEntry entry : syndFeed.getEntries()) {
             WebFeed.WebFeedEntry item = new WebFeed.WebFeedEntry();
 
-            item.setTitle(entry.getTitle());
-            item.setPubDate(entry.getPublishedDate().toString());
-            item.setLink(entry.getLink());
-            item.setAuthor(entry.getAuthor());
+            String title = entry.getTitle();
+            if (title != null)
+                item.setTitle(title);
+            Date date = entry.getPublishedDate();
+            if (date != null)
+                item.setPubDate(date);
+            String link = entry.getLink();
+            if (link != null)
+                item.setLink(link);
+            String author = entry.getAuthor();
+            if (author != null)
+                item.setAuthor(author);
             items.add(item);
         }
 

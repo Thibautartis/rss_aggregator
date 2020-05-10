@@ -90,6 +90,14 @@ public class UserController {
 
         String password = request.getParameter("password");
         String confirm = request.getParameter("confirm");
+
+        if (password == null || confirm == null) {
+            response.setStatus(400);
+            String missingParam = password == null ? "password" : "confirm";
+            return new JSONObject().put("status", "error")
+                    .put("error", "parameter \"" + missingParam + "\" is missing").toString();
+        }
+
         PasswordValidator validator = new PasswordValidator();
         if (password == null || !validator.isValid(password, confirm)) {
             response.setStatus(400);
@@ -106,6 +114,11 @@ public class UserController {
     public String passwordLost(final HttpServletRequest request) {
 
         String email = request.getParameter("username");
+
+        if (email == null) {
+            return new JSONObject().put("status", "error").put("error", "parameter \"username\" is missing").toString();
+        }
+
         User user = userService.findUserByEmail(email);
 
         if (user == null) {
@@ -133,6 +146,12 @@ public class UserController {
         String password = request.getParameter("password");
         String confirm = request.getParameter("confirm");
 
+        String result = checkTokenPasswordConfirm(token, password, confirm);
+        if (!result.equals("ok")) {
+            response.setStatus(400);
+            return new JSONObject().put("status", "error").put("error", result).toString();
+        }
+
         PasswordLostToken lostToken = userService.getPasswordLostToken(token);
         if (lostToken == null) {
             response.setStatus(400);
@@ -155,6 +174,22 @@ public class UserController {
         userService.changeUserPassword(user, password);
 
         return new JSONObject().put("status", "ok").toString();
+    }
+
+    private String checkTokenPasswordConfirm(String token, String password, String confirm) {
+
+        String prefix = "parameter \"";
+        String suffix = "\" is missing";
+        if (token == null) {
+            return prefix + "token" + suffix;
+        }
+        if (password == null) {
+            return prefix + "password" + suffix;
+        }
+        if (confirm == null) {
+            return prefix + "confirm" + suffix;
+        }
+        return "ok";
     }
 
     @RequestMapping(value = "/rmUser", method = RequestMethod.POST)
